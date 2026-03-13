@@ -44,9 +44,9 @@ function App() {
       {loading && (
         <div className="loading-overlay">
           <div className="spinner"></div>
-          <div style={{ fontWeight: 600, color: '#94a3b8' }}>Loading Historical Data...</div>
-          <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '8px' }}>
-            Downloading and processing vector polygons (200MB)
+          <div className="loading-text">Chronicling History...</div>
+          <div style={{ fontSize: '0.7rem', color: '#475569', marginTop: '12px', fontStyle: 'italic' }}>
+            Retrieving historical coordinates
           </div>
         </div>
       )}
@@ -60,7 +60,8 @@ function App() {
       />
 
       <div className="large-year-overlay">
-        {year < 0 ? `${Math.abs(year)} BCE` : `${year} CE`}
+        <span className="year-value">{Math.abs(year)}</span>
+        <span className="year-suffix">{year < 0 ? 'BCE' : 'CE'}</span>
       </div>
 
       <InfoBox 

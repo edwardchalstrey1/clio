@@ -8,7 +8,10 @@ const Legend = ({ polities, onPolityClick }) => {
 
   return (
     <div className="legend-panel">
-      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">
+      <div 
+        className="text-[10px] font-bold text-[#64748b] uppercase tracking-[0.2em] mb-4"
+        style={{ fontFamily: 'var(--font-display)' }}
+      >
         Visible Polities ({uniquePolities.length})
       </div>
       <div className="legend-items">

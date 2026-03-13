@@ -5,7 +5,22 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const [isStyleReady, setIsStyleReady] = useState(false);
+
+  // Helper to generate filter
+  const getFilter = (y, m) => {
+    const yearNum = parseInt(y);
+    const modeFilter = m === 'Polities'
+      ? ['any', ['==', ['get', 'MemberOf'], null], ['==', ['get', 'MemberOf'], '']]
+      : ['any', ['==', ['get', 'Components'], null], ['==', ['get', 'Components'], '']];
+
+    return [
+      'all',
+      ['<=', ['get', 'FromYear'], yearNum],
+      ['>=', ['get', 'ToYear'], yearNum],
+      modeFilter
+    ];
+  };
 
   useEffect(() => {
     if (map.current) return;
@@ -43,11 +58,14 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
         generateId: true
       });
 
+      const initialFilter = getFilter(year, mode);
+
       map.current.addLayer({
         id: 'cliopatria-fills',
         type: 'fill',
         source: 'cliopatria',
         layout: {},
+        filter: initialFilter, // Apply filter immediately!
         paint: {
           'fill-color': ['get', 'Color'],
           'fill-opacity': ['case', ['boolean', ['feature-state', 'selected'], false], 0.8, 0.5],
@@ -60,6 +78,7 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
         type: 'line',
         source: 'cliopatria',
         layout: {},
+        filter: initialFilter, // Apply filter immediately!
         paint: {
           'line-color': ['get', 'Color'],
           'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, 1]
@@ -79,26 +98,23 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
         onPolitySelect(feature.properties);
-        
-        // Update feature state for highlighting
-        // First reset all
-        // map.current.removeFeatureState({ source: 'cliopatria' }); // This can be expensive
-        // Instead, we just let the parent handle reset logic if needed, 
-        // but for now let's just set the state for the clicked one.
         map.current.setFeatureState(
           { source: 'cliopatria', id: feature.id },
           { selected: true }
         );
       });
 
-      // Query visible features when map is idle
-      map.current.on('idle', () => {
+      // Query visible features
+      const updateLegend = () => {
         const features = map.current.queryRenderedFeatures({ layers: ['cliopatria-fills'] });
         const visiblePolities = features.map(f => f.properties);
         setVisiblePolities(visiblePolities);
-      });
+      };
 
-      setLoading(false);
+      map.current.on('idle', updateLegend);
+      map.current.on('moveend', updateLegend);
+
+      setIsStyleReady(true);
       onLoaded();
     });
 
@@ -112,23 +128,12 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
 
   // Update filters when year or mode changes
   useEffect(() => {
-    if (!map.current || !map.current.isStyleLoaded() || !map.current.getSource('cliopatria')) return;
+    if (!map.current || !isStyleReady || !map.current.getSource('cliopatria')) return;
 
-    const yearNum = parseInt(year);
-    const modeFilter = mode === 'Polities'
-      ? ['any', ['==', ['get', 'MemberOf'], null], ['==', ['get', 'MemberOf'], '']]
-      : ['any', ['==', ['get', 'Components'], null], ['==', ['get', 'Components'], '']];
-
-    const filter = [
-      'all',
-      ['<=', ['get', 'FromYear'], yearNum],
-      ['>=', ['get', 'ToYear'], yearNum],
-      modeFilter
-    ];
-
+    const filter = getFilter(year, mode);
     map.current.setFilter('cliopatria-fills', filter);
     map.current.setFilter('cliopatria-borders', filter);
-  }, [year, mode, loading]);
+  }, [year, mode, isStyleReady]);
 
   return (
     <div ref={mapContainer} className="map-container" />
