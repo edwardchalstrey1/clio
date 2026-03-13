@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapViewer = ({ year, mode, onLoaded }) => {
+const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ const MapViewer = ({ year, mode, onLoaded }) => {
         layout: {},
         paint: {
           'fill-color': ['get', 'Color'],
-          'fill-opacity': 0.5,
+          'fill-opacity': ['case', ['boolean', ['feature-state', 'selected'], false], 0.8, 0.5],
           'fill-outline-color': ['get', 'Color']
         }
       });
@@ -62,7 +62,7 @@ const MapViewer = ({ year, mode, onLoaded }) => {
         layout: {},
         paint: {
           'line-color': ['get', 'Color'],
-          'line-width': 1
+          'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, 1]
         }
       });
 
@@ -75,23 +75,27 @@ const MapViewer = ({ year, mode, onLoaded }) => {
         map.current.getCanvas().style.cursor = '';
       });
 
-      // Popup on click
+      // Selection on click
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
-        const { DisplayName, FromYear, ToYear, Wikipedia } = feature.properties;
+        onPolitySelect(feature.properties);
         
-        const content = `
-          <div style="font-family: inherit;">
-            <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 4px;">${DisplayName}</div>
-            <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">${FromYear} - ${ToYear}</div>
-            ${Wikipedia ? `<a href="https://en.wikipedia.org/wiki/${Wikipedia}" target="_blank" style="color: #60a5fa; text-decoration: none; font-size: 0.8rem; font-weight: 600;">Wikipedia &rarr;</a>` : ''}
-          </div>
-        `;
+        // Update feature state for highlighting
+        // First reset all
+        // map.current.removeFeatureState({ source: 'cliopatria' }); // This can be expensive
+        // Instead, we just let the parent handle reset logic if needed, 
+        // but for now let's just set the state for the clicked one.
+        map.current.setFeatureState(
+          { source: 'cliopatria', id: feature.id },
+          { selected: true }
+        );
+      });
 
-        new maplibregl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(content)
-          .addTo(map.current);
+      // Query visible features when map is idle
+      map.current.on('idle', () => {
+        const features = map.current.queryRenderedFeatures({ layers: ['cliopatria-fills'] });
+        const visiblePolities = features.map(f => f.properties);
+        setVisiblePolities(visiblePolities);
       });
 
       setLoading(false);

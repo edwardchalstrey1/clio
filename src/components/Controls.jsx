@@ -1,6 +1,6 @@
-import { History, Layout, Map as MapIcon } from 'lucide-react';
+import { History, Layout, Map as MapIcon, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
-const Controls = ({ year, setYear, mode, setMode }) => {
+const Controls = ({ year, setYear, mode, setMode, isPlaying, onTogglePlay, onStep }) => {
   return (
     <div className="controls-panel">
       <div className="flex items-center gap-2 mb-1">
@@ -17,7 +17,7 @@ const Controls = ({ year, setYear, mode, setMode }) => {
           </div>
         </label>
         <div className="year-input-container">
-          <div className="year-display">{year}</div>
+          <div className="year-display">{year < 0 ? `${Math.abs(year)} BCE` : `${year} CE`}</div>
           <input
             type="number"
             value={year}
@@ -38,6 +38,18 @@ const Controls = ({ year, setYear, mode, setMode }) => {
         <div className="flex justify-between text-[10px] text-slate-500 mt-2 font-mono">
           <span>3400 BCE</span>
           <span>PRESENT</span>
+        </div>
+
+        <div className="playback-controls">
+          <button className="icon-btn" onClick={() => onStep(-1)}>
+            <SkipBack size={16} />
+          </button>
+          <button className="icon-btn" onClick={onTogglePlay}>
+            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+          </button>
+          <button className="icon-btn" onClick={() => onStep(1)}>
+            <SkipForward size={16} />
+          </button>
         </div>
       </div>
 
