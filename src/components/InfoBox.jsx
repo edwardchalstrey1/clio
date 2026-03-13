@@ -1,52 +1,42 @@
 const InfoBox = ({ selectedPolity, onClose }) => {
   if (!selectedPolity) return null;
 
-  const { DisplayName, FromYear, ToYear, Wikipedia, Area, Type } = selectedPolity;
+  const { DisplayName, FromYear, ToYear, Wikipedia, Area } = selectedPolity;
 
   return (
-    <div className="info-box">
-      <div className="flex justify-between items-start mb-4">
-        <div className="info-title">{DisplayName}</div>
-        <button 
-          onClick={onClose}
-          className="text-slate-500 hover:text-white transition-colors"
-          title="Close"
-        >
-          ✕
-        </button>
+    <div className="info-box" style={{ borderTopColor: selectedPolity.Color }}>
+      <div className="info-header">
+        <h2 className="info-title">{DisplayName}</h2>
+        <button className="close-btn" onClick={onClose}>✕</button>
       </div>
       
-      <div className="info-content">
-        <div className="flex flex-col mb-2">
-          <span className="text-[10px] text-[#64748b] uppercase tracking-wider font-bold mb-1">Duration</span>
-          <span className="text-sm font-medium">{FromYear} <span className="text-xs text-slate-500">to</span> {ToYear}</span>
-        </div>
-        
-        {Area && (
-          <div className="flex flex-col mb-2">
-            <span className="text-[10px] text-[#64748b] uppercase tracking-wider font-bold mb-1">Territorial Area</span>
-            <span className="text-sm font-medium">{Math.round(Area).toLocaleString()} <span className="text-xs text-slate-500">Km²</span></span>
-          </div>
-        )}
-        
-        <div className="flex flex-col mb-4">
-          <span className="text-[10px] text-[#64748b] uppercase tracking-wider font-bold mb-1">Administrative Type</span>
-          <span className="text-sm font-medium">{Type}</span>
-        </div>
+      <table className="info-table">
+        <tbody>
+          <tr>
+            <td>Historical Duration</td>
+            <td>{FromYear} <span className="opacity-30 mx-1">/</span> {ToYear}</td>
+          </tr>
+          {Area && (
+            <tr>
+              <td>Territorial Area</td>
+              <td>{Math.round(Area).toLocaleString()} <span className="text-[10px] text-slate-500 ml-1">Km²</span></td>
+            </tr>
+          )}
+        </tbody>
+      </table>
 
-        {Wikipedia && (
-          <div className="pt-4 border-t border-white/5">
-            <a
-              href={`https://en.wikipedia.org/wiki/${Wikipedia}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#e2b860] hover:text-white hover:underline text-xs font-bold tracking-tight inline-flex items-center gap-2 transition-all"
-            >
-              Consult Archive on Wikipedia ↗
-            </a>
-          </div>
-        )}
-      </div>
+      {Wikipedia && (
+        <div className="wiki-link-container">
+          <a
+            href={`https://en.wikipedia.org/wiki/${Wikipedia}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#e2b860] hover:text-white text-xs font-bold flex items-center gap-2 transition-all"
+          >
+            CONSULT THE ARCHIVES ON WIKIPEDIA ↗
+          </a>
+        </div>
+      )}
     </div>
   );
 };

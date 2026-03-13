@@ -55,6 +55,7 @@ function App() {
         onLoaded={handleLoaded} 
         setVisiblePolities={setVisiblePolities}
         onPolitySelect={setSelectedPolity}
+        selectedPolity={selectedPolity}
       />
 
       <div className="large-year-overlay">

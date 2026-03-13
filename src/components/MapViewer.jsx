@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect }) => {
+const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
@@ -63,8 +63,18 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect }) => {
         layout: {},
         filter: initialFilter,
         paint: {
-          'fill-color': ['get', 'Color'],
-          'fill-opacity': 0.5, // Static opacity
+          'fill-color': [
+            'case',
+            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+            '#e2b860', // Theme Yellow
+            ['get', 'Color']
+          ],
+          'fill-opacity': [
+            'case',
+            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+            0.9,
+            0.5
+          ],
           'fill-outline-color': ['get', 'Color']
         }
       });
@@ -76,8 +86,18 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect }) => {
         layout: {},
         filter: initialFilter,
         paint: {
-          'line-color': ['get', 'Color'],
-          'line-width': 1 // Static width
+          'line-color': [
+            'case',
+            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+            '#60a5fa', // Theme Blue
+            ['get', 'Color']
+          ],
+          'line-width': [
+            'case',
+            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+            4,
+            1
+          ]
         }
       });
 
@@ -90,7 +110,7 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect }) => {
         map.current.getCanvas().style.cursor = '';
       });
 
-      // Selection on click (No map highlight state set here anymore)
+      // Selection on click
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
         onPolitySelect(feature.properties);
@@ -118,14 +138,41 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect }) => {
     };
   }, []);
 
-  // Update filters when year changes
+  // Update filters and paint when year or selection changes
   useEffect(() => {
     if (!map.current || !isStyleReady || !map.current.getSource('cliopatria')) return;
 
+    // Update filter
     const filter = getFilter(year);
     map.current.setFilter('cliopatria-fills', filter);
     map.current.setFilter('cliopatria-borders', filter);
-  }, [year, isStyleReady]);
+
+    // Update selection highlight
+    map.current.setPaintProperty('cliopatria-fills', 'fill-color', [
+      'case',
+      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+      '#e2b860',
+      ['get', 'Color']
+    ]);
+    map.current.setPaintProperty('cliopatria-fills', 'fill-opacity', [
+      'case',
+      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+      0.9,
+      0.5
+    ]);
+    map.current.setPaintProperty('cliopatria-borders', 'line-color', [
+      'case',
+      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+      '#60a5fa',
+      ['get', 'Color']
+    ]);
+    map.current.setPaintProperty('cliopatria-borders', 'line-width', [
+      'case',
+      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
+      4,
+      1
+    ]);
+  }, [year, isStyleReady, selectedPolity]);
 
   return (
     <div ref={mapContainer} className="map-container" />

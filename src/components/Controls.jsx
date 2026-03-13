@@ -1,6 +1,31 @@
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
 const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
+  const minYear = -3400;
+  const maxYear = 2024;
+  const range = maxYear - minYear;
+
+  const renderTicks = () => {
+    const ticks = [];
+    // Every 100 years
+    for (let y = minYear; y <= maxYear; y += 100) {
+      const position = ((y - minYear) / range) * 100;
+      const isLabeled = y % 500 === 0 || y === minYear || y === 2000;
+      
+      ticks.push(
+        <div key={y} className="tick" style={{ left: `${position}%`, position: 'absolute' }}>
+          <div className="tick-line" style={{ height: isLabeled ? '8px' : '4px' }} />
+          {isLabeled && (
+            <div className="tick-label">
+              {y < 0 ? `${Math.abs(y)}B` : y === 0 ? '0' : `${y}`}
+            </div>
+          )}
+        </div>
+      );
+    }
+    return ticks;
+  };
+
   return (
     <div className="controls-panel">
       <div className="bottom-bar-layout">
@@ -27,15 +52,14 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
             <div className="timeline-wrapper">
               <input
                 type="range"
-                min="-3400"
-                max="2024"
+                min={minYear}
+                max={maxYear}
                 value={year}
                 onChange={(e) => setYear(parseInt(e.target.value))}
                 className="slider"
               />
-              <div className="timeline-labels">
-                <span>3400 BCE</span>
-                <span>2024 CE</span>
+              <div className="timeline-ticks">
+                {renderTicks()}
               </div>
             </div>
           </div>
