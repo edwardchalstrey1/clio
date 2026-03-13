@@ -3,18 +3,25 @@ const InfoBox = ({ selectedPolity, onClose }) => {
 
   const { DisplayName, FromYear, ToYear, Wikipedia, Area } = selectedPolity;
 
+  const formatYear = (y) => {
+    const absYear = Math.abs(y);
+    return y < 0 ? `${absYear}BCE` : `${absYear}CE`;
+  };
+
   return (
     <div className="info-box" style={{ borderTopColor: selectedPolity.Color }}>
       <div className="info-header">
         <h2 className="info-title">{DisplayName}</h2>
-        <button className="close-btn" onClick={onClose}>✕</button>
+        <button className="close-btn" onClick={onClose} title="Close">✕</button>
       </div>
       
       <table className="info-table">
         <tbody>
           <tr>
             <td>Historical Duration</td>
-            <td>{FromYear} <span className="opacity-30 mx-1">/</span> {ToYear}</td>
+            <td className="font-medium">
+              {formatYear(FromYear)} <span className="text-[10px] text-slate-500 mx-1">to</span> {formatYear(ToYear)}
+            </td>
           </tr>
           {Area && (
             <tr>

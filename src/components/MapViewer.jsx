@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -17,6 +17,14 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
       ['any', ['==', ['get', 'MemberOf'], null], ['==', ['get', 'MemberOf'], '']]
     ];
   };
+
+  // Selection on click
+  const updateLegend = useCallback(() => {
+    if (!map.current) return;
+    const features = map.current.queryRenderedFeatures({ layers: ['cliopatria-fills'] });
+    const visiblePolities = features.map(f => f.properties);
+    setVisiblePolities(visiblePolities);
+  }, [setVisiblePolities]);
 
   useEffect(() => {
     if (map.current) return;
@@ -66,7 +74,7 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
           'fill-color': [
             'case',
             ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-            '#e2b860', // Theme Yellow
+            '#e2b860',
             ['get', 'Color']
           ],
           'fill-opacity': [
@@ -89,7 +97,7 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
           'line-color': [
             'case',
             ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-            '#60a5fa', // Theme Blue
+            '#0f172a', // Theme Ink/Dark Blue
             ['get', 'Color']
           ],
           'line-width': [
@@ -115,13 +123,6 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
         const feature = e.features[0];
         onPolitySelect(feature.properties);
       });
-
-      // Query visible features
-      const updateLegend = () => {
-        const features = map.current.queryRenderedFeatures({ layers: ['cliopatria-fills'] });
-        const visiblePolities = features.map(f => f.properties);
-        setVisiblePolities(visiblePolities);
-      };
 
       map.current.on('idle', updateLegend);
       map.current.on('moveend', updateLegend);
@@ -163,7 +164,7 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
     map.current.setPaintProperty('cliopatria-borders', 'line-color', [
       'case',
       ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-      '#60a5fa',
+      '#0f172a',
       ['get', 'Color']
     ]);
     map.current.setPaintProperty('cliopatria-borders', 'line-width', [
@@ -172,7 +173,10 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
       4,
       1
     ]);
-  }, [year, isStyleReady, selectedPolity]);
+
+    // Force legend update during playback
+    updateLegend();
+  }, [year, isStyleReady, selectedPolity, updateLegend]);
 
   return (
     <div ref={mapContainer} className="map-container" />

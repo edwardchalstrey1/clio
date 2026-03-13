@@ -24,8 +24,8 @@ function App() {
   }, [isPlaying]);
 
   const handleLoaded = useCallback(() => {
-    // Switch to a random year once loaded
-    const randomYear = Math.floor(Math.random() * (2024 - (-3400) + 1)) + (-3400);
+    // Switch to a random year (1600CE to 1950CE) once loaded
+    const randomYear = Math.floor(Math.random() * (1950 - 1600 + 1)) + 1600;
     setYear(randomYear);
     setLoading(false);
   }, []);
@@ -36,6 +36,13 @@ function App() {
       const next = prev + delta;
       return Math.min(2024, Math.max(-3400, next));
     });
+  };
+
+  const togglePlayback = () => {
+    if (!isPlaying) {
+      setSelectedPolity(null); // Deselect on play
+    }
+    setIsPlaying(!isPlaying);
   };
 
   return (
@@ -79,7 +86,7 @@ function App() {
           year={year} 
           setYear={setYear} 
           isPlaying={isPlaying}
-          onTogglePlay={() => setIsPlaying(!isPlaying)}
+          onTogglePlay={togglePlayback}
           onStep={handleStep}
         />
       )}

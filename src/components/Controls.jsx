@@ -17,7 +17,7 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
           <div className="tick-line" style={{ height: isLabeled ? '8px' : '4px' }} />
           {isLabeled && (
             <div className="tick-label">
-              {y < 0 ? `${Math.abs(y)}B` : y === 0 ? '0' : `${y}`}
+              {y < 0 ? `${Math.abs(y)}BCE` : y === 0 ? '0' : `${y}CE`}
             </div>
           )}
         </div>
