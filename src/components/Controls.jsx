@@ -1,6 +1,6 @@
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
-const Controls = ({ year, setYear, mode, setMode, isPlaying, onTogglePlay, onStep }) => {
+const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
   return (
     <div className="controls-panel">
       <div className="bottom-bar-layout">
@@ -24,34 +24,20 @@ const Controls = ({ year, setYear, mode, setMode, isPlaying, onTogglePlay, onSte
               <SkipForward size={16} />
             </button>
             
-            <input
-              type="range"
-              min="-3400"
-              max="2024"
-              value={year}
-              onChange={(e) => setYear(parseInt(e.target.value))}
-              className="slider"
-            />
-          </div>
-          <div className="flex justify-between text-[10px] text-[#64748b] font-serif uppercase tracking-[0.2em]">
-            <span>3400 BCE</span>
-            <span>2024 CE</span>
-          </div>
-        </div>
-
-        {/* Toggle Section */}
-        <div className="toggle-section">
-          <div
-            className={`radio-option ${mode === 'Polities' ? 'active' : ''}`}
-            onClick={() => setMode('Polities')}
-          >
-            Polities
-          </div>
-          <div
-            className={`radio-option ${mode === 'Components' ? 'active' : ''}`}
-            onClick={() => setMode('Components')}
-          >
-            Components
+            <div className="timeline-wrapper">
+              <input
+                type="range"
+                min="-3400"
+                max="2024"
+                value={year}
+                onChange={(e) => setYear(parseInt(e.target.value))}
+                className="slider"
+              />
+              <div className="timeline-labels">
+                <span>3400 BCE</span>
+                <span>2024 CE</span>
+              </div>
+            </div>
           </div>
         </div>
 

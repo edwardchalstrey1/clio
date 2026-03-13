@@ -96,17 +96,24 @@ body {
   font-style: italic;
 }
 
+/* Timeline & Playback */
 .timeline-section {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+}
+
+.timeline-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 20px; /* Space for labels */
 }
 
 .playback-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* History Slider */
@@ -138,64 +145,51 @@ body {
   background: var(--color-gold);
 }
 
-.toggle-section {
+.timeline-labels {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   display: flex;
-  background: rgba(30, 41, 59, 0.5);
-  padding: 2px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  min-width: 200px;
-}
-
-.radio-option {
-  flex: 1;
-  text-align: center;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: var(--font-display);
-  transition: all 0.3s;
-  color: #94a3b8;
-}
-
-.radio-option.active {
-  background: var(--color-gold);
-  color: var(--color-ink);
-  box-shadow: 0 2px 8px rgba(226, 184, 96, 0.3);
+  justify-content: space-between;
+  font-size: 10px;
+  color: #64748b;
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 4px;
 }
 
 /* Large Year Display - High Visibility */
 .large-year-overlay {
   position: absolute;
-  bottom: 120px; /* Above bottom bar */
+  bottom: 110px; /* Above bottom bar */
   left: 20px;
-  background: rgba(15, 23, 42, 0.6);
-  padding: 10px 24px;
-  border-radius: 8px;
-  backdrop-filter: blur(4px);
-  border-left: 4px solid var(--color-gold);
+  background: rgba(15, 23, 42, 0.7);
+  padding: 12px 28px;
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+  border-left: 6px solid var(--color-gold);
   pointer-events: none;
   z-index: 50;
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  box-shadow: 8px 8px 24px rgba(0, 0, 0, 0.4);
+  gap: 10px;
+  box-shadow: 12px 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 .year-value {
   font-family: var(--font-display);
-  font-size: 3.5rem;
+  font-size: 4rem;
   font-weight: 900;
   color: #fff;
   line-height: 1;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
 }
 
 .year-suffix {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-gold);
 }
@@ -205,37 +199,95 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 320px;
+  width: 340px;
   background: var(--glass);
   backdrop-filter: blur(12px);
-  border-top: 2px solid var(--color-gold);
-  border-radius: 8px;
-  padding: 20px;
+  border-top: 3px solid var(--color-gold);
+  border-radius: 4px;
+  padding: 24px;
   z-index: 60;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.7);
 }
 
 .info-title {
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   color: var(--color-gold);
-  margin-bottom: 12px;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .legend-panel {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 260px;
-  max-height: calc(100vh - 250px);
+  width: 280px;
+  /* Fit screen minus top margin and bottom bar */
+  max-height: calc(100vh - 160px); 
   background: var(--glass);
-  backdrop-filter: blur(12px);
-  border-radius: 8px;
+  backdrop-filter: blur(16px);
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 16px;
+  padding: 20px;
   z-index: 60;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-items {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 8px;
+}
+
+/* Scrollbar styling */
+.legend-items::-webkit-scrollbar {
+  width: 4px;
+}
+.legend-items::-webkit-scrollbar-track {
+  background: transparent;
+}
+.legend-items::-webkit-scrollbar-thumb {
+  background: var(--color-gold-muted);
+  border-radius: 2px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  color: #cbd5e1;
+}
+
+.legend-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.legend-item.active {
+  background: var(--color-gold);
+  color: var(--color-ink);
+  font-weight: 800;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 /* Playback */

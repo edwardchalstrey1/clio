@@ -7,7 +7,6 @@ import './App.css';
 
 function App() {
   const [year, setYear] = useState(1700);
-  const [mode, setMode] = useState('Polities');
   const [loading, setLoading] = useState(true);
   const [visiblePolities, setVisiblePolities] = useState([]);
   const [selectedPolity, setSelectedPolity] = useState(null);
@@ -53,7 +52,6 @@ function App() {
       
       <MapViewer 
         year={year} 
-        mode={mode} 
         onLoaded={handleLoaded} 
         setVisiblePolities={setVisiblePolities}
         onPolitySelect={setSelectedPolity}
@@ -72,14 +70,13 @@ function App() {
       <Legend 
         polities={visiblePolities} 
         onPolityClick={setSelectedPolity}
+        selectedPolity={selectedPolity}
       />
       
       {!loading && (
         <Controls 
           year={year} 
           setYear={setYear} 
-          mode={mode} 
-          setMode={setMode} 
           isPlaying={isPlaying}
           onTogglePlay={() => setIsPlaying(!isPlaying)}
           onStep={handleStep}

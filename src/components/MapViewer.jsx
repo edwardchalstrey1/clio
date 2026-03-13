@@ -2,23 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect }) => {
+const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
 
-  // Helper to generate filter
-  const getFilter = (y, m) => {
+  // Helper to generate filter (Always Polities mode now)
+  const getFilter = (y) => {
     const yearNum = parseInt(y);
-    const modeFilter = m === 'Polities'
-      ? ['any', ['==', ['get', 'MemberOf'], null], ['==', ['get', 'MemberOf'], '']]
-      : ['any', ['==', ['get', 'Components'], null], ['==', ['get', 'Components'], '']];
-
     return [
       'all',
       ['<=', ['get', 'FromYear'], yearNum],
       ['>=', ['get', 'ToYear'], yearNum],
-      modeFilter
+      ['any', ['==', ['get', 'MemberOf'], null], ['==', ['get', 'MemberOf'], '']]
     ];
   };
 
@@ -58,17 +54,17 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
         generateId: true
       });
 
-      const initialFilter = getFilter(year, mode);
+      const initialFilter = getFilter(year);
 
       map.current.addLayer({
         id: 'cliopatria-fills',
         type: 'fill',
         source: 'cliopatria',
         layout: {},
-        filter: initialFilter, // Apply filter immediately!
+        filter: initialFilter,
         paint: {
           'fill-color': ['get', 'Color'],
-          'fill-opacity': ['case', ['boolean', ['feature-state', 'selected'], false], 0.8, 0.5],
+          'fill-opacity': 0.5, // Static opacity
           'fill-outline-color': ['get', 'Color']
         }
       });
@@ -78,10 +74,10 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
         type: 'line',
         source: 'cliopatria',
         layout: {},
-        filter: initialFilter, // Apply filter immediately!
+        filter: initialFilter,
         paint: {
           'line-color': ['get', 'Color'],
-          'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, 1]
+          'line-width': 1 // Static width
         }
       });
 
@@ -94,14 +90,10 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
         map.current.getCanvas().style.cursor = '';
       });
 
-      // Selection on click
+      // Selection on click (No map highlight state set here anymore)
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
         onPolitySelect(feature.properties);
-        map.current.setFeatureState(
-          { source: 'cliopatria', id: feature.id },
-          { selected: true }
-        );
       });
 
       // Query visible features
@@ -126,14 +118,14 @@ const MapViewer = ({ year, mode, onLoaded, setVisiblePolities, onPolitySelect })
     };
   }, []);
 
-  // Update filters when year or mode changes
+  // Update filters when year changes
   useEffect(() => {
     if (!map.current || !isStyleReady || !map.current.getSource('cliopatria')) return;
 
-    const filter = getFilter(year, mode);
+    const filter = getFilter(year);
     map.current.setFilter('cliopatria-fills', filter);
     map.current.setFilter('cliopatria-borders', filter);
-  }, [year, mode, isStyleReady]);
+  }, [year, isStyleReady]);
 
   return (
     <div ref={mapContainer} className="map-container" />
