@@ -106,9 +106,8 @@ body {
 
 .timeline-wrapper {
   position: relative;
-  width: 100%;
-  padding-bottom: 24px; /* Space for ticks */
-  margin: 0 10px; /* Prevent slider thumb clipping */
+  width: 80%; /* Compressed as requested */
+  margin: 0 auto 24px auto; /* Center it and handle tick space */
 }
 
 .playback-section {
