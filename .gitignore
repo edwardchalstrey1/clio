@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Historical Data (Split into parts for GitHub)
+public/data.geojson
