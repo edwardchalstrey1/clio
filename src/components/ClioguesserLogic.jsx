@@ -76,7 +76,7 @@ export default function ClioguesserLogic({ geoData, onBack }) {
   if (rounds.length === 0) return null;
 
   return (
-    <div className="game-container" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+    <div className="app-container">
       
       <button className="exit-btn" onClick={onBack}>
         &#8592; Exit Game

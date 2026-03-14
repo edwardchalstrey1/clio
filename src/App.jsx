@@ -162,9 +162,9 @@ function App() {
   }
 
   if (appMode === 'game') {
-    return (
-      <div className="app-container">
-        {!geoData && (
+    if (!geoData) {
+      return (
+        <div className="app-container">
           <div className="loading-overlay">
             <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
               <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>GUESSER</span></h1>
@@ -179,10 +179,11 @@ function App() {
               {`Loading Historical Data: ${loadProgress}%`}
             </div>
           </div>
-        )}
-        {geoData && <ClioguesserLogic geoData={geoData} polityStats={polityStats} onBack={() => setAppMode(null)} />}
-      </div>
-    );
+        </div>
+      );
+    }
+    
+    return <ClioguesserLogic geoData={geoData} polityStats={polityStats} onBack={() => setAppMode(null)} />;
   }
 
   return (
@@ -240,6 +241,7 @@ function App() {
           isPlaying={isPlaying}
           onTogglePlay={togglePlayback}
           onStep={handleStep}
+          onBack={() => setAppMode(null)}
         />
       )}
     </div>
