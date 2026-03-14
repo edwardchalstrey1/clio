@@ -159,9 +159,14 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
     map.current.setFilter('cliopatria-fills', filter);
     map.current.setFilter('cliopatria-borders', filter);
 
-    // Update selection layers
+    // Update selection layers with year filtering
     const selectedName = selectedPolity?.DisplayName || '';
-    const selectionFilter = ['==', ['get', 'DisplayName'], selectedName];
+    const baseFilter = getFilter(year);
+    const selectionFilter = [
+      'all',
+      ['==', ['get', 'DisplayName'], selectedName],
+      ...baseFilter.slice(1) // Include year range and MemberOf checks from base filter
+    ];
     map.current.setFilter('cliopatria-selection-fill', selectionFilter);
     map.current.setFilter('cliopatria-selection-border', selectionFilter);
 
