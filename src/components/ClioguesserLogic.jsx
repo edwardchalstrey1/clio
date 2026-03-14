@@ -98,15 +98,15 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
           <ul className="hints-list">
             {revealedPolities.map((polity, i) => (
               <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span 
-                  style={{ 
-                    display: 'inline-block', 
-                    width: '12px', 
-                    height: '12px', 
+                <span
+                  style={{
+                    display: 'inline-block',
+                    width: '12px',
+                    height: '12px',
                     backgroundColor: polity.color,
                     borderRadius: '2px',
                     border: '1px solid rgba(255, 255, 255, 0.4)'
-                  }} 
+                  }}
                 />
                 {polity.name}
               </li>
@@ -119,7 +119,7 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
       <GameHUD
         round={currentRoundIdx + 1}
         totalRounds={10}
-        score={score}
+        score={score.toLocaleString()}
         gameState={gameState}
         onGuess={handleGuessSubmit}
         onNext={nextRound}

@@ -25,7 +25,7 @@ const GameHUD = ({
       <div className="game-hud-overlay center-screen">
         <div className="game-over-box">
           <h2 className="title">Game Over</h2>
-          <div className="final-score">Final Score: {score}</div>
+          <div className="final-score">Final Score: {score.toLocaleString()}</div>
           <p className="subtitle">Remember, closer to 0 is better.</p>
           <button className="gold-btn wide" onClick={onRestart}>Play Again</button>
         </div>
@@ -40,7 +40,7 @@ const GameHUD = ({
         <div className="brand-section" style={{ minWidth: '180px' }}>
           <h1 className="title" style={{ fontSize: '1.5rem', margin: 0 }}>CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></h1>
           <div className="round-indicator subtitle" style={{ marginTop: '4px', fontWeight: 'bold' }}>Round {round} / {totalRounds}</div>
-          <div className="score-indicator subtitle">Total Score: {score}</div>
+          <div className="score-indicator subtitle">Total Score: {score.toLocaleString()}</div>
         </div>
 
         {gameState === 'playing' ? (
