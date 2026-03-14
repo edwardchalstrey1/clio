@@ -60,14 +60,14 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
     const error = Math.abs(currentYear - guessYear);
     const penalties = revealedPolities.length * PENALTY_PER_HINT;
     const roundScore = error + penalties;
-    
+
     setScore(prev => prev + roundScore);
-    setLastResult({ 
-      trueYear: currentYear, 
-      guess: guessYear, 
-      error, 
-      penalties, 
-      total: roundScore 
+    setLastResult({
+      trueYear: currentYear,
+      guess: guessYear,
+      error,
+      penalties,
+      total: roundScore
     });
     setGameState('round_end');
   };
@@ -93,7 +93,7 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
       {/* Floating Hints Panel */}
       {revealedPolities.length > 0 && (
         <div className="hints-panel">
-          <div className="hints-title">Revealed Polities (-{PENALTY_PER_HINT} pts each)</div>
+          <div className="hints-title">Revealed Polities (+{PENALTY_PER_HINT} penalty each)</div>
           <ul className="hints-list">
             {revealedPolities.map((name, i) => <li key={i}>{name}</li>)}
           </ul>
@@ -101,7 +101,7 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
       )}
 
       {/* When round ends, show the result in the HUD */}
-      <GameHUD 
+      <GameHUD
         round={currentRoundIdx + 1}
         totalRounds={10}
         score={score}
