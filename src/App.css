@@ -52,6 +52,7 @@ body {
 
 /* Bottom Bar - Cinematic History Style */
 .controls-panel {
+  box-sizing: border-box;
   width: 100%;
   background: var(--glass);
   backdrop-filter: blur(16px);
