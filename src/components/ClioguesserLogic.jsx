@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import MapViewer from './MapViewer';
 import GameHUD from './GameHUD';
 import './GameHUD.css';
@@ -9,7 +9,7 @@ function getRandomYear(min, max) {
 
 const PENALTY_PER_HINT = 50;
 
-export default function ClioguesserLogic({ geoData, onBack }) {
+export default function ClioguesserLogic({ geoData, polityStats, onBack, onStateUpdate }) {
   const [rounds, setRounds] = useState([]);
   const [currentRoundIdx, setCurrentRoundIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -39,13 +39,22 @@ export default function ClioguesserLogic({ geoData, onBack }) {
 
   const currentYear = rounds[currentRoundIdx] || 0;
 
-  const handleReveal = (polityProps) => {
+  const handleReveal = useCallback((polityProps) => {
     if (gameState !== 'playing') return;
     const name = polityProps.DisplayName;
-    if (name && !revealedPolities.includes(name)) {
-      setRevealedPolities(prev => [...prev, name]);
+    if (name) {
+      setRevealedPolities(prev => {
+        if (!prev.includes(name)) return [...prev, name];
+        return prev;
+      });
     }
-  };
+  }, [gameState]);
+
+  useEffect(() => {
+    if (onStateUpdate && rounds.length > 0) {
+      onStateUpdate(currentYear, handleReveal);
+    }
+  }, [currentYear, handleReveal, onStateUpdate, rounds.length]);
 
   const handleGuessSubmit = (guessYear) => {
     const error = Math.abs(currentYear - guessYear);
@@ -76,19 +85,10 @@ export default function ClioguesserLogic({ geoData, onBack }) {
   if (rounds.length === 0) return null;
 
   return (
-    <div className="app-container">
-      
-      <button className="exit-btn" onClick={onBack}>
-        &#8592; Exit Game
+    <>
+      <button className="exit-btn" onClick={onBack} style={{ zIndex: 2000 }}>
+        &#8592; Exit
       </button>
-
-      <MapViewer 
-        year={currentYear} 
-        data={geoData} 
-        interactiveMode="game"
-        onPolitySelect={handleReveal}
-        // During round_end, we might want to let them see everything? No, keep it simple.
-      />
 
       {/* Floating Hints Panel */}
       {revealedPolities.length > 0 && (
@@ -111,6 +111,6 @@ export default function ClioguesserLogic({ geoData, onBack }) {
         onRestart={initGame}
         lastResult={lastResult}
       />
-    </div>
+    </>
   );
 }

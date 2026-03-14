@@ -37,13 +37,14 @@ const GameHUD = ({
     <div className="game-hud-container controls-panel">
       <div className="bottom-bar-layout game-layout">
         
-        <div className="brand-section">
-          <div className="round-indicator title">Round {round} / {totalRounds}</div>
+        <div className="brand-section" style={{ minWidth: '180px' }}>
+          <h1 className="title" style={{ fontSize: '1.5rem', margin: 0 }}>CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></h1>
+          <div className="round-indicator subtitle" style={{ marginTop: '4px', fontWeight: 'bold' }}>Round {round} / {totalRounds}</div>
           <div className="score-indicator subtitle">Total Score: {score}</div>
         </div>
 
         {gameState === 'playing' ? (
-          <form className="guess-section" onSubmit={handleSubmit}>
+          <form className="guess-section" onSubmit={handleSubmit} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <label className="year-jump-label">GUESS THE YEAR:</label>
             <div className="guess-input-group">
               <input 
@@ -59,7 +60,7 @@ const GameHUD = ({
             <div className="hint-info subtitle">Click a polity for a hint (+50 penalty)</div>
           </form>
         ) : (
-          <div className="result-section">
+          <div className="result-section" style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <div className="result-stats">
               <span className="result-item">True Year: <strong className="gold-text">{lastResult.trueYear}</strong></span>
               <span className="result-item">Your Guess: <strong>{lastResult.guess}</strong></span>

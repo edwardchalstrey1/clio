@@ -14,7 +14,7 @@ const LandingScreen = ({ onSelectMode, loadProgress }) => {
           className="mode-card" 
           onClick={() => onSelectMode('viewer')}
         >
-          <div className="mode-card-title">CLIOPATRIA</div>
+          <div className="mode-card-title">CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></div>
           <div className="mode-card-desc">Explore the global history databank through an interactive timeline.</div>
         </button>
 
@@ -22,7 +22,7 @@ const LandingScreen = ({ onSelectMode, loadProgress }) => {
           className="mode-card game" 
           onClick={() => onSelectMode('game')}
         >
-          <div className="mode-card-title">CLIOGUESSER</div>
+          <div className="mode-card-title">CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></div>
           <div className="mode-card-desc">Test your historical knowledge in a 10-round map guessing game.</div>
         </button>
       </div>
