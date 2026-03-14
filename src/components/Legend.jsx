@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronDown, ChevronUp, Users } from 'lucide-react';
 
 const Legend = ({ polities, onPolityClick, selectedPolity }) => {
   const legendRef = useRef(null);
+  const [isMinimized, setIsMinimized] = useState(false);
   
   // Deduplicate by DisplayName
   const uniquePolities = Array.from(new Map(polities.map(p => [p.DisplayName, p])).values())
@@ -9,42 +11,53 @@ const Legend = ({ polities, onPolityClick, selectedPolity }) => {
 
   // Auto-scroll to selected polity
   useEffect(() => {
-    if (selectedPolity && legendRef.current) {
+    if (selectedPolity && legendRef.current && !isMinimized) {
       const activeEl = legendRef.current.querySelector('.legend-item.active');
       if (activeEl) {
         activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }
-  }, [selectedPolity]);
+  }, [selectedPolity, isMinimized]);
 
   return (
-    <div className="legend-panel">
+    <div className={`legend-panel ${isMinimized ? 'minimized' : ''}`}>
       <div 
-        className="text-[10px] font-bold text-[#64748b] uppercase tracking-[0.2em] mb-4"
-        style={{ fontFamily: 'var(--font-display)' }}
+        className="legend-header"
+        onClick={() => setIsMinimized(!isMinimized)}
       >
-        Visible Polities ({uniquePolities.length})
+        <div className="flex items-center gap-2">
+          <Users size={14} className="text-gold" />
+          <span className="uppercase tracking-[0.1em] font-display text-[10px] font-bold">
+            Visible Polities ({uniquePolities.length})
+          </span>
+        </div>
+        <button className="text-slate-500">
+          {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
       </div>
-      <div className="legend-items" ref={legendRef}>
-        {uniquePolities.map((polity, idx) => (
-          <div
-            key={`${polity.DisplayName}-${idx}`}
-            className={`legend-item ${selectedPolity?.DisplayName === polity.DisplayName ? 'active' : ''}`}
-            onClick={() => onPolityClick(polity)}
-          >
+
+      {!isMinimized && (
+        <div className="legend-items" ref={legendRef}>
+          {uniquePolities.map((polity, idx) => (
             <div
-              className="legend-color"
-              style={{ backgroundColor: polity.Color }}
-            />
-            <div className="flex-grow truncate">{polity.DisplayName}</div>
-          </div>
-        ))}
-        {uniquePolities.length === 0 && (
-          <div className="text-[10px] text-slate-500 italic px-3">
-            No polities in view
-          </div>
-        )}
-      </div>
+              key={`${polity.DisplayName}-${idx}`}
+              className={`legend-item ${selectedPolity?.DisplayName === polity.DisplayName ? 'active' : ''}`}
+              onClick={() => onPolityClick(polity)}
+            >
+              <div
+                className="legend-color"
+                style={{ backgroundColor: polity.Color }}
+              />
+              <div className="flex-grow truncate">{polity.DisplayName}</div>
+            </div>
+          ))}
+          {uniquePolities.length === 0 && (
+            <div className="text-[10px] text-slate-500 italic px-3 py-4 text-center">
+              Scanning the horizon...
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
