@@ -151,10 +151,9 @@ body {
 .timeline-ticks {
   position: absolute;
   top: 10px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
+  left: 10px; /* Precise align to thumb center at start */
+  right: 10px; /* Precise align to thumb center at end */
+  height: 0;
   pointer-events: none;
 }
 
@@ -162,24 +161,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 0;
+  width: 0; /* Ensures 'left' is the center of the tick */
+  height: 0;
 }
 
 .tick-line {
   width: 1px;
   height: 6px;
-  background: rgba(255, 255, 255, 0.3); /* Slightly brighter */
-  margin-bottom: 4px;
+  background: #fff; /* BRIGHT WHITE */
+  opacity: 0.6;
+  margin-bottom: 2px;
 }
 
 .tick-label {
-  font-size: 9px; /* Slightly larger */
-  color: #fff; /* CLEAR WHITE */
+  font-size: 9px;
+  color: #fff; /* BRIGHT WHITE */
   font-family: var(--font-serif);
   white-space: nowrap;
   transform: translateX(-50%);
-  margin-left: 50%;
-  font-weight: 500;
+  font-weight: 700; /* Max clarity */
+  line-height: 1;
 }
 
 .timeline-labels {

@@ -7,8 +7,9 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
 
   const renderTicks = () => {
     const ticks = [];
-    // Every 100 years
-    for (let y = minYear; y <= maxYear; y += 100) {
+    // Strictly centuries: -3400, -3300, ..., 2000
+    // We stop at 2000 because 2024 is the final year and not a full century boundary
+    for (let y = -3400; y <= 2000; y += 100) {
       const position = ((y - minYear) / range) * 100;
       const isLabeled = y % 500 === 0 || y === minYear || y === 2000;
       
