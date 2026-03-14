@@ -58,54 +58,52 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
     <div className="controls-panel">
       <div className="bottom-bar-layout">
         
-        {/* Brand Section */}
+        {/* Brand Section - Left */}
         <div className="brand-section">
-          <h1 className="title">Cliopatria</h1>
+          <h1 className="title">CLIOPATRIA</h1>
           <p className="subtitle">Seshat Global History Databank</p>
         </div>
 
-        {/* Timeline & Playback */}
-        <div className="timeline-section">
-          <div className="playback-section">
-            <div className="playback-controls">
-              <button className="icon-btn" onClick={() => onStep(-1)}>
-                <SkipBack size={16} />
-              </button>
-              <button className="icon-btn play-pause" onClick={onTogglePlay}>
-                {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-              </button>
-              <button className="icon-btn" onClick={() => onStep(1)}>
-                <SkipForward size={16} />
-              </button>
-            </div>
-            
-            <div className="timeline-wrapper">
-              <input
-                type="range"
-                min={minYear}
-                max={maxYear}
-                value={year}
-                onChange={(e) => setYear(parseInt(e.target.value))}
-                className="slider"
-              />
-              <div className="timeline-ticks">
-                {renderTicks()}
-              </div>
-            </div>
-
-            <div className="year-jump-container">
-              <Hash size={14} className="text-slate-500" />
-              <input
-                type="text"
-                value={inputVal}
-                onChange={handleInputChange}
-                onBlur={submitYear}
-                onKeyDown={handleKeyDown}
-                className="year-jump-input"
-                placeholder="Year"
-              />
-            </div>
+        {/* Playback Controls - Center */}
+        <div className="playback-controls">
+          <button className="icon-btn-circle" onClick={() => onStep(-1)} title="Step Back">
+            <SkipBack size={14} />
+          </button>
+          <button className="icon-btn-circle play-pause main-play" onClick={onTogglePlay} title={isPlaying ? "Pause" : "Play"}>
+            {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+          </button>
+          <button className="icon-btn-circle" onClick={() => onStep(1)} title="Step Forward">
+            <SkipForward size={14} />
+          </button>
+        </div>
+        
+        {/* Timeline - Center Right */}
+        <div className="timeline-wrapper">
+          <input
+            type="range"
+            min={minYear}
+            max={maxYear}
+            value={year}
+            onChange={(e) => setYear(parseInt(e.target.value))}
+            className="slider"
+          />
+          <div className="timeline-ticks">
+            {renderTicks()}
           </div>
+        </div>
+
+        {/* Year Jump - Far Right */}
+        <div className="year-jump-container">
+          <Hash size={14} className="text-slate-500" />
+          <input
+            type="text"
+            value={inputVal}
+            onChange={handleInputChange}
+            onBlur={submitYear}
+            onKeyDown={handleKeyDown}
+            className="year-jump-input"
+            placeholder="Year"
+          />
         </div>
 
       </div>

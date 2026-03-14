@@ -116,7 +116,7 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
         filter: ['==', ['get', 'DisplayName'], ''],
         paint: {
           'line-color': '#0f172a',
-          'line-width': 4
+          'line-width': 1
         }
       });
 

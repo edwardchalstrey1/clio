@@ -68,8 +68,9 @@ body {
 .bottom-bar-layout {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 40px;
+  justify-content: flex-start;
+  gap: 32px;
+  width: 100%;
 }
 
 .brand-section {
@@ -106,8 +107,8 @@ body {
 
 .timeline-wrapper {
   position: relative;
-  width: 80%; /* Compressed as requested */
-  margin: 0 auto 24px auto; /* Center it and handle tick space */
+  flex-grow: 1; /* Horizontal expansion */
+  margin: 0 20px;
 }
 
 .playback-section {
@@ -187,38 +188,37 @@ body {
   display: none; /* Replaced by ticks */
 }
 
-/* Large Year Display - High Visibility */
+/* Year Display Box - Bottom Left Unit */
 .large-year-overlay {
   position: absolute;
-  bottom: 110px; /* Above bottom bar */
-  left: 20px;
-  background: rgba(15, 23, 42, 0.7);
-  padding: 12px 28px;
+  bottom: 85px; /* Above footer */
+  left: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 10px 24px;
   border-radius: 4px;
-  backdrop-filter: blur(8px);
-  border-left: 6px solid var(--color-gold);
+  border-left: 5px solid var(--color-gold);
   pointer-events: none;
   z-index: 50;
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  box-shadow: 12px 12px 32px rgba(0, 0, 0, 0.5);
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .year-value {
   font-family: var(--font-display);
-  font-size: 4rem;
-  font-weight: 900;
+  font-size: 3rem; /* Scaled to fit box better */
+  font-weight: 700;
   color: #fff;
   line-height: 1;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
 }
 
 .year-suffix {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-gold);
+  opacity: 0.8;
 }
 
 /* Panels */
@@ -353,86 +353,50 @@ body {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .info-box {
-    width: 280px;
-    right: 15px;
+  .bottom-bar-layout {
+    gap: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .bottom-bar-layout {
     flex-direction: column;
-    height: auto;
-    padding: 15px;
-    gap: 15px;
+    padding: 20px;
+    gap: 20px;
   }
 
   .brand-section {
     text-align: center;
-    border-right: none;
-    padding-right: 0;
-  }
-
-  .playback-section {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-  }
-
-  .timeline-wrapper {
     width: 100%;
-    order: 3;
-    margin: 0;
-  }
-
-  .year-jump-container {
-    order: 2;
   }
 
   .playback-controls {
-    order: 1;
+    justify-content: center;
   }
 
-  .legend-panel {
-    bottom: 120px;
-    left: 15px;
-    width: 220px;
+  .timeline-wrapper {
+    width: 90%;
+    margin: 10px auto 30px auto;
   }
 
-  .legend-panel.minimized {
-    width: 180px;
-  }
-
-  .info-box {
-    top: 15px;
-    right: 15px;
-    width: calc(100% - 30px);
-    max-height: 250px;
+  .year-jump-container {
+    width: 100px;
+    justify-content: center;
   }
 
   .large-year-overlay {
+    bottom: unset;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .title {
-    font-size: 1.2rem;
+    padding: 20px 40px;
+    border-left: none;
+    background: rgba(15, 23, 42, 0.85);
+    border-top: 4px solid var(--color-gold);
   }
 
-  .subtitle {
-    font-size: 0.7rem;
-  }
-
-  .tick-label {
-    font-size: 8px;
-  }
-
-  .legend-panel {
-    display: none; /* Hide legend on very small screens or make it minimizable to icon? Let's hide for now to prevent clutter */
+  .year-value {
+    font-size: 5rem;
   }
 }
 
@@ -527,22 +491,29 @@ body {
 }
 
 /* Playback */
-.icon-btn {
+.icon-btn-circle {
   background: transparent;
-  border: 1px solid var(--color-gold-muted);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--color-gold);
-  padding: 8px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.icon-btn:hover {
+.icon-btn-circle:hover {
   background: var(--color-gold);
   color: var(--color-ink);
+  border-color: var(--color-gold);
+}
+
+.main-play {
+  width: 50px;
+  height: 50px;
   border-color: var(--color-gold);
 }
 
