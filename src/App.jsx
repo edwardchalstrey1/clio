@@ -142,7 +142,7 @@ function App() {
     <div className="app-container">
       {loading && (
         <div className="loading-overlay">
-          <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
             <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
             <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>A Map of World History</p>
           </div>

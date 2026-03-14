@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Github } from 'lucide-react';
 import YearJump from './YearJump';
 
 const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
@@ -57,7 +57,17 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
         {/* Brand Section - Left */}
         <div className="brand-section">
           <h1 className="title">CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
-          <p className="subtitle">A Map of World History</p>
+          <p className="subtitle">
+            <a
+              href="https://github.com/Seshat-Global-History-Databank/cliopatria"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="subtitle github-link"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'inherit' }}
+            >
+              <Github size={12} />
+            </a> A Map of World History
+          </p>
         </div>
 
         {/* Playback Controls - Center */}
