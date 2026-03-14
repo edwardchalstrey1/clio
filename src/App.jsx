@@ -18,6 +18,11 @@ function App() {
   const [polityStats, setPolityStats] = useState({});
   const [geoData, setGeoData] = useState(null);
   const [appMode, setAppMode] = useState(null);
+  
+  // Game mode map states to proxy into MapViewer
+  const [gameYear, setGameYear] = useState(0);
+  const [gameRevealHandler, setGameRevealHandler] = useState(null);
+  const [gameReady, setGameReady] = useState(false);
 
   // Fetch and index data on mount with simulated progress
   useEffect(() => {
@@ -142,6 +147,12 @@ function App() {
     }
   }, [loading, visiblePolities]);
 
+  useEffect(() => {
+    if (appMode === 'game' && !gameReady && visiblePolities.length > 0) {
+      setGameReady(true);
+    }
+  }, [appMode, gameReady, visiblePolities]);
+
   const handleStep = (delta) => {
     setIsPlaying(false);
     setYear((prev) => {
@@ -157,91 +168,115 @@ function App() {
     setIsPlaying(!isPlaying);
   };
 
-  if (!appMode) {
-    return <LandingScreen onSelectMode={setAppMode} loadProgress={loadProgress} />;
-  }
+  const handleGameModeBack = () => {
+    setAppMode(null);
+    setGameReady(false);
+  };
 
-  if (appMode === 'game') {
-    if (!geoData) {
-      return (
-        <div className="app-container">
-          <div className="loading-overlay">
-            <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
-              <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>GUESSER</span></h1>
-              <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Test your historical knowledge</p>
-            </div>
+  const handleViewerModeBack = () => {
+    setAppMode(null);
+    setSelectedPolity(null);
+  };
 
-            <div className="loading-bar-container">
-              <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
-            </div>
-
-            <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
-              {`Loading Historical Data: ${loadProgress}%`}
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
-    return <ClioguesserLogic geoData={geoData} polityStats={polityStats} onBack={() => setAppMode(null)} />;
-  }
+  const isModeLoading = (!appMode) || (appMode === 'game' && !gameReady) || (appMode === 'viewer' && loading);
 
   return (
     <div className="app-container">
-      {loading && (
-        <div className="loading-overlay">
+      {/* Background loading / mode selection overlays */}
+      {(!appMode) && (
+        <LandingScreen onSelectMode={setAppMode} loadProgress={loadProgress} mode={null} />
+      )}
+      
+      {(appMode === 'game' && !gameReady) && (
+        <div className="loading-overlay" style={{ zIndex: 3000 }}>
           <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
-            <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
-            <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>A Map of World History</p>
+            <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></h1>
+            <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Test your historical knowledge</p>
           </div>
-
           <div className="loading-bar-container">
             <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
           </div>
-
           <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
             {`Loading Historical Data: ${loadProgress}%`}
           </div>
         </div>
       )}
 
-      <MapViewer
-        year={year}
-        data={geoData}
-        onLoaded={handleLoaded}
-        setVisiblePolities={setVisiblePolities}
-        onPolitySelect={setSelectedPolity}
-        selectedPolity={selectedPolity}
-      />
-
-      <div className="large-year-overlay">
-        <div className="year-display">
-          <span className="year-value">{Math.abs(year)}</span>
-          <span className="year-suffix">{year < 0 ? 'BCE' : 'CE'}</span>
+      {(appMode === 'viewer' && loading) && (
+        <div className="loading-overlay" style={{ zIndex: 3000 }}>
+          <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
+            <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
+            <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>A Map of World History</p>
+          </div>
+          <div className="loading-bar-container">
+            <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
+          </div>
+          <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
+            {`Loading Historical Data: ${loadProgress}%`}
+          </div>
         </div>
-        <YearJump year={year} setYear={setYear} isPlaying={isPlaying} />
+      )}
+
+      {/* MapViewer unconditionally mounted to prevent WebGL memory leaks on unmount */}
+      <div style={{ display: isModeLoading ? 'none' : 'flex', flexDirection: 'column', flexGrow: 1, position: 'relative', width: '100%' }}>
+        <MapViewer
+          year={appMode === 'game' ? gameYear : year}
+          data={geoData}
+          interactiveMode={appMode === 'game' ? 'game' : 'viewer'}
+          onLoaded={handleLoaded}
+          setVisiblePolities={setVisiblePolities}
+          onPolitySelect={appMode === 'game' ? (pol) => gameRevealHandler && gameRevealHandler(pol) : setSelectedPolity}
+          selectedPolity={appMode === 'game' ? null : selectedPolity}
+        />
       </div>
 
-      <InfoBox
-        selectedPolity={selectedPolity}
-        onClose={() => setSelectedPolity(null)}
-        polityStats={polityStats}
-      />
+      {/* Viewer UI */}
+      {appMode === 'viewer' && !loading && (
+        <>
+          <button className="exit-btn" onClick={handleViewerModeBack} style={{ zIndex: 2000 }}>
+            &#8592; Exit
+          </button>
+          
+          <div className="large-year-overlay">
+            <div className="year-display">
+              <span className="year-value">{Math.abs(year)}</span>
+              <span className="year-suffix">{year < 0 ? 'BCE' : 'CE'}</span>
+            </div>
+            <YearJump year={year} setYear={setYear} isPlaying={isPlaying} />
+          </div>
 
-      <Legend
-        polities={visiblePolities}
-        onPolityClick={setSelectedPolity}
-        selectedPolity={selectedPolity}
-      />
+          <InfoBox
+            selectedPolity={selectedPolity}
+            onClose={() => setSelectedPolity(null)}
+            polityStats={polityStats}
+          />
 
-      {!loading && (
-        <Controls
-          year={year}
-          setYear={setYear}
-          isPlaying={isPlaying}
-          onTogglePlay={togglePlayback}
-          onStep={handleStep}
-          onBack={() => setAppMode(null)}
+          <Legend
+            polities={visiblePolities}
+            onPolityClick={setSelectedPolity}
+            selectedPolity={selectedPolity}
+          />
+
+          <Controls
+            year={year}
+            setYear={setYear}
+            isPlaying={isPlaying}
+            onTogglePlay={togglePlayback}
+            onStep={handleStep}
+          />
+        </>
+      )}
+
+      {/* Game UI */}
+      {appMode === 'game' && geoData && (
+        <ClioguesserLogic 
+          geoData={geoData} 
+          polityStats={polityStats} 
+          onBack={handleGameModeBack}
+          onStateUpdate={(y, revealHandler) => {
+            setGameYear(y);
+            setGameRevealHandler(() => revealHandler);
+          }}
         />
       )}
     </div>

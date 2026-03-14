@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Github } from 'lucide-react';
 import YearJump from './YearJump';
 
-const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep, onBack }) => {
+const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
   const minYear = -3400;
   const maxYear = 2024;
   const range = maxYear - minYear;
@@ -69,14 +69,6 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep, onBack }) =>
             </a>
             <span>A Map of World History</span>
           </p>
-          {onBack && (
-            <button 
-              onClick={onBack} 
-              style={{ background: 'transparent', border: '1px solid var(--color-gold-muted)', color: 'var(--color-gold)', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', marginTop: '8px', width: 'fit-content' }}
-            >
-              &#8592; Change Mode
-            </button>
-          )}
         </div>
 
         {/* Playback Controls - Center */}
