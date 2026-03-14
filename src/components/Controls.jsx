@@ -22,11 +22,11 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
 
     for (let y = -3400; y <= 2000; y += 100) {
       if (isMobile && y === -3400) continue; // Skip start tick on mobile as requested
-      
+
       const position = ((y - minYear) / range) * 100;
       // Show label if it matches skipFactor, or if it's start/end
       const isLabeled = y % skipFactor === 0 || y === minYear || y === 2000;
-      
+
       ticks.push(
         <div key={y} className="tick" style={{ left: `${position}%`, position: 'absolute' }}>
           <div className="tick-line" style={{ height: isLabeled ? '8px' : '4px' }} />
@@ -53,11 +53,11 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
         </div>
       )}
       <div className="bottom-bar-layout">
-        
+
         {/* Brand Section - Left */}
         <div className="brand-section">
-          <h1 className="title">CLIOPATRIA</h1>
-          <p className="subtitle">Seshat Global History Databank</p>
+          <h1 className="title">CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
+          <p className="subtitle">A Map of World History</p>
         </div>
 
         {/* Playback Controls - Center */}
@@ -72,7 +72,7 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
             <SkipForward size={14} />
           </button>
         </div>
-        
+
         {/* Timeline - Center Right */}
         <div className="timeline-wrapper">
           <input

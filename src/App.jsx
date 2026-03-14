@@ -28,12 +28,12 @@ function App() {
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/data.geojson');
-    
+
     xhr.onload = () => {
       if (xhr.status === 200) {
         const data = JSON.parse(xhr.responseText);
         const stats = {};
-        
+
         data.features.forEach(f => {
           const p = f.properties;
           const name = p.DisplayName;
@@ -46,7 +46,7 @@ function App() {
           }
           stats[name].minYear = Math.min(stats[name].minYear, p.FromYear);
           stats[name].maxYear = Math.max(stats[name].maxYear, p.ToYear);
-          
+
           // Aggregate area for the same year slice
           if (!stats[name].yearlyData[p.FromYear]) {
             stats[name].yearlyData[p.FromYear] = {
@@ -56,16 +56,16 @@ function App() {
           }
           stats[name].yearlyData[p.FromYear].area += (p.Area || 0);
         });
-        
+
         setPolityStats(stats);
-        
+
         // Complete the loading bar
         clearInterval(progressInterval);
         setLoadProgress(100);
       }
     };
     xhr.send();
-    
+
     return () => clearInterval(progressInterval);
   }, []);
 
@@ -94,15 +94,15 @@ function App() {
           // but we search for the closest slice starting at or before 'year'
           const years = Object.keys(stats.yearlyData).map(Number).sort((a, b) => b - a);
           const currentSliceStart = years.find(y => y <= year);
-          
+
           if (currentSliceStart !== undefined) {
-             const sliceData = stats.yearlyData[currentSliceStart];
-             if (selectedPolity.Area !== sliceData.area) {
-                setSelectedPolity(prev => ({
-                   ...prev,
-                   Area: sliceData.area
-                }));
-             }
+            const sliceData = stats.yearlyData[currentSliceStart];
+            if (selectedPolity.Area !== sliceData.area) {
+              setSelectedPolity(prev => ({
+                ...prev,
+                Area: sliceData.area
+              }));
+            }
           }
         }
       }
@@ -143,23 +143,23 @@ function App() {
       {loading && (
         <div className="loading-overlay">
           <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center' }}>
-            <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>Cliopatria</h1>
-            <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Seshat Global History Databank</p>
+            <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
+            <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>A Map of World History</p>
           </div>
-          
+
           <div className="loading-bar-container">
             <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
           </div>
-          
+
           <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
-            {loadProgress < 100 ? `Downloading Historical Data: ${loadProgress}%` : 'Mapping Chronological Borders...'}
+            {`Loading Historical Data: ${loadProgress}%`}
           </div>
         </div>
       )}
-      
-      <MapViewer 
-        year={year} 
-        onLoaded={handleLoaded} 
+
+      <MapViewer
+        year={year}
+        onLoaded={handleLoaded}
         setVisiblePolities={setVisiblePolities}
         onPolitySelect={setSelectedPolity}
         selectedPolity={selectedPolity}
@@ -173,22 +173,22 @@ function App() {
         <YearJump year={year} setYear={setYear} isPlaying={isPlaying} />
       </div>
 
-      <InfoBox 
-        selectedPolity={selectedPolity} 
-        onClose={() => setSelectedPolity(null)} 
+      <InfoBox
+        selectedPolity={selectedPolity}
+        onClose={() => setSelectedPolity(null)}
         polityStats={polityStats}
       />
 
-      <Legend 
-        polities={visiblePolities} 
+      <Legend
+        polities={visiblePolities}
         onPolityClick={setSelectedPolity}
         selectedPolity={selectedPolity}
       />
-      
+
       {!loading && (
-        <Controls 
-          year={year} 
-          setYear={setYear} 
+        <Controls
+          year={year}
+          setYear={setYear}
           isPlaying={isPlaying}
           onTogglePlay={togglePlayback}
           onStep={handleStep}
