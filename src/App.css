@@ -302,7 +302,7 @@ body {
 /* Panels */
 .info-box {
   position: absolute;
-  top: 20px;
+  top: 80px;
   left: 20px;
   width: 360px;
   background: var(--glass);
