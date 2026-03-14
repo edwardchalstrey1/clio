@@ -22,7 +22,7 @@ The main page displays a map of the world with historical polities highlighted i
 
 ## Clioguesser game
 
-Clioguesser challenges the player to guess the year based on the map. It works as follows:
+Clioguesser challenges the player to guess the year based on the map, with all the polities displayed for that year. It works as follows:
 
 1. The player plays 10 rounds of Clioguesser. In each round they are presented with a particular map and have to guess which year is shown. The ten rounds draw years from the following ranges:
     - 4 from 1850CE to 2024CE
