@@ -67,7 +67,9 @@ const GameHUD = ({
               <span className="result-item">Off by: <strong>{lastResult.error}</strong> yrs</span>
               {lastResult.penalties > 0 && <span className="result-item penalty">Penalties: +{lastResult.penalties}</span>}
             </div>
-            <button className="gold-btn guess-btn pulse" autoFocus onClick={onNext}>NEXT ROUND</button>
+            <button className="gold-btn guess-btn pulse" autoFocus onClick={onNext}>
+              {round === totalRounds ? "END GAME" : "NEXT ROUND"}
+            </button>
           </div>
         )}
       </div>
