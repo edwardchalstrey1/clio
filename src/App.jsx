@@ -22,7 +22,7 @@ function App() {
     const duration = 2000; // 2 seconds estimated
     const progressInterval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const progress = Math.min(Math.round((elapsed / duration) * 100), 95); // Clip at 95 until data loaded
+      const progress = Math.min(Math.round((elapsed / duration) * 100), 98); // Clip at 98 until data loaded
       setLoadProgress(progress);
     }, 50);
 
@@ -61,7 +61,7 @@ function App() {
 
         // Complete the loading bar
         clearInterval(progressInterval);
-        setLoadProgress(100);
+        setLoadProgress(99);
       }
     };
     xhr.send();
