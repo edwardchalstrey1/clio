@@ -6,24 +6,24 @@ const LandingScreen = ({ onSelectMode, loadProgress }) => {
     <div className="landing-container loading-overlay">
       <div className="brand-section" style={{ marginBottom: '60px', textAlign: 'center', alignItems: 'center' }}>
         <h1 className="title" style={{ fontSize: '4rem', margin: 0 }}>CLIO</h1>
-        <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Choose your experience</p>
+        <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Maps of world history.</p>
       </div>
 
       <div className="mode-selection">
-        <button 
-          className="mode-card" 
+        <button
+          className="mode-card"
           onClick={() => onSelectMode('viewer')}
         >
           <div className="mode-card-title">CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></div>
-          <div className="mode-card-desc">Explore the global history databank through an interactive timeline.</div>
+          <div className="mode-card-desc">Explore the territories of states, nations and empires across time.</div>
         </button>
 
-        <button 
-          className="mode-card game" 
+        <button
+          className="mode-card game"
           onClick={() => onSelectMode('game')}
         >
           <div className="mode-card-title">CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></div>
-          <div className="mode-card-desc">Test your historical knowledge in a 10-round map guessing game.</div>
+          <div className="mode-card-desc">Test your historical knowledge in a 10 round map-based guessing game.</div>
         </button>
       </div>
 
