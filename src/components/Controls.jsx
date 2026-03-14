@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import YearJump from './YearJump';
 
 const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
   const minYear = -3400;
@@ -42,6 +43,15 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
 
   return (
     <div className="controls-panel">
+      {screenWidth < 768 && (
+        <div className="mobile-year-hud">
+          <div className="year-display">
+            <span className="year-value">{Math.abs(year)}</span>
+            <span className="year-suffix">{year < 0 ? 'BCE' : 'CE'}</span>
+          </div>
+          <YearJump year={year} setYear={setYear} isPlaying={isPlaying} />
+        </div>
+      )}
       <div className="bottom-bar-layout">
         
         {/* Brand Section - Left */}
