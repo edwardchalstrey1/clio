@@ -34,25 +34,30 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
       style: {
         version: 8,
         sources: {
-          'carto-voyager': {
+          'esri-gray': {
             type: 'raster',
-            tiles: ['https://a.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png'],
+            tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'],
             tileSize: 256,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
           }
         },
         layers: [
           {
-            id: 'carto-voyager-layer',
+            id: 'esri-gray-layer',
             type: 'raster',
-            source: 'carto-voyager',
+            source: 'esri-gray',
             minzoom: 0,
             maxzoom: 20
           }
         ]
       },
       center: [20, 20],
-      zoom: 2
+      zoom: 1.5,
+      dragRotate: false,
+      touchPitch: false,
+      pitchWithRotate: false,
+      boxZoom: false,
+      keyboard: false
     });
 
     map.current.on('load', () => {

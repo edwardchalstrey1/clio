@@ -14,22 +14,25 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [polityStats, setPolityStats] = useState({});
 
-  // Fetch and index data on mount with progress tracking
+  // Fetch and index data on mount with simulated progress
   useEffect(() => {
+    // Simulated smooth loading bar
+    const startTime = Date.now();
+    const duration = 2000; // 2 seconds estimated
+    const progressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(Math.round((elapsed / duration) * 100), 95); // Clip at 95 until data loaded
+      setLoadProgress(progress);
+    }, 50);
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/data.geojson');
     
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = Math.round((event.loaded / event.total) * 100);
-        setLoadProgress(percentComplete);
-      }
-    };
-
     xhr.onload = () => {
       if (xhr.status === 200) {
         const data = JSON.parse(xhr.responseText);
         const stats = {};
+        
         data.features.forEach(f => {
           const p = f.properties;
           const name = p.DisplayName;
@@ -42,15 +45,27 @@ function App() {
           }
           stats[name].minYear = Math.min(stats[name].minYear, p.FromYear);
           stats[name].maxYear = Math.max(stats[name].maxYear, p.ToYear);
-          stats[name].yearlyData[p.FromYear] = {
-            area: p.Area,
-            color: p.Color
-          };
+          
+          // Aggregate area for the same year slice
+          if (!stats[name].yearlyData[p.FromYear]) {
+            stats[name].yearlyData[p.FromYear] = {
+              area: 0,
+              color: p.Color
+            };
+          }
+          stats[name].yearlyData[p.FromYear].area += (p.Area || 0);
         });
+        
         setPolityStats(stats);
+        
+        // Complete the loading bar
+        clearInterval(progressInterval);
+        setLoadProgress(100);
       }
     };
     xhr.send();
+    
+    return () => clearInterval(progressInterval);
   }, []);
 
   // Playback logic
