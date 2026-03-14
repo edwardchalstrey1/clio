@@ -8,16 +8,27 @@ import './App.css';
 function App() {
   const [year, setYear] = useState(1700);
   const [loading, setLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
   const [visiblePolities, setVisiblePolities] = useState([]);
   const [selectedPolity, setSelectedPolity] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [polityStats, setPolityStats] = useState({});
 
-  // Fetch and index data on mount
+  // Fetch and index data on mount with progress tracking
   useEffect(() => {
-    fetch('/data.geojson')
-      .then(res => res.json())
-      .then(data => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/data.geojson');
+    
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = Math.round((event.loaded / event.total) * 100);
+        setLoadProgress(percentComplete);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
         const stats = {};
         data.features.forEach(f => {
           const p = f.properties;
@@ -37,7 +48,9 @@ function App() {
           };
         });
         setPolityStats(stats);
-      });
+      }
+    };
+    xhr.send();
   }, []);
 
   // Playback logic
@@ -113,10 +126,17 @@ function App() {
     <div className="app-container">
       {loading && (
         <div className="loading-overlay">
-          <div className="spinner"></div>
-          <div className="loading-text">Chronicling History...</div>
-          <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '12px', fontStyle: 'italic', letterSpacing: '0.1em' }}>
-            Retracing the borders of lost empires
+          <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center' }}>
+            <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>Cliopatria</h1>
+            <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Seshat Global History Databank</p>
+          </div>
+          
+          <div className="loading-bar-container">
+            <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
+          </div>
+          
+          <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
+            {loadProgress < 100 ? `Downloading Historical Data: ${loadProgress}%` : 'Mapping Chronological Borders...'}
           </div>
         </div>
       )}

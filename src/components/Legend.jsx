@@ -25,13 +25,13 @@ const Legend = ({ polities, onPolityClick, selectedPolity }) => {
         className="legend-header"
         onClick={() => setIsMinimized(!isMinimized)}
       >
-        <div className="flex items-center gap-2">
-          <Users size={14} className="text-gold" />
-          <span className="uppercase tracking-[0.1em] font-display text-[10px] font-bold">
-            Visible Polities ({uniquePolities.length})
+        <div className="flex items-center gap-2 overflow-hidden">
+          <Users size={14} className="text-gold flex-shrink-0" />
+          <span className="uppercase tracking-[0.05em] font-display text-[10px] font-bold truncate">
+            {isMinimized ? `Polities (${uniquePolities.length})` : `Visible Polities (${uniquePolities.length})`}
           </span>
         </div>
-        <button className="text-slate-500">
+        <button className="text-slate-500 hover:text-white transition-colors flex-shrink-0">
           {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
