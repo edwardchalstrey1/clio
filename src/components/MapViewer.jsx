@@ -69,6 +69,7 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
 
       const initialFilter = getFilter(year);
 
+      // Base layers
       map.current.addLayer({
         id: 'cliopatria-fills',
         type: 'fill',
@@ -76,18 +77,8 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
         layout: {},
         filter: initialFilter,
         paint: {
-          'fill-color': [
-            'case',
-            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-            '#e2b860',
-            ['get', 'Color']
-          ],
-          'fill-opacity': [
-            'case',
-            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-            0.9,
-            0.5
-          ],
+          'fill-color': ['get', 'Color'],
+          'fill-opacity': 0.5,
           'fill-outline-color': ['get', 'Color']
         }
       });
@@ -99,18 +90,33 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
         layout: {},
         filter: initialFilter,
         paint: {
-          'line-color': [
-            'case',
-            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-            '#0f172a', // Theme Ink/Dark Blue
-            ['get', 'Color']
-          ],
-          'line-width': [
-            'case',
-            ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-            4,
-            1
-          ]
+          'line-color': ['get', 'Color'],
+          'line-width': 1
+        }
+      });
+
+      // Selection layers (always on top)
+      map.current.addLayer({
+        id: 'cliopatria-selection-fill',
+        type: 'fill',
+        source: 'cliopatria',
+        layout: {},
+        filter: ['==', ['get', 'DisplayName'], ''],
+        paint: {
+          'fill-color': '#e2b860',
+          'fill-opacity': 0.9
+        }
+      });
+
+      map.current.addLayer({
+        id: 'cliopatria-selection-border',
+        type: 'line',
+        source: 'cliopatria',
+        layout: {},
+        filter: ['==', ['get', 'DisplayName'], ''],
+        paint: {
+          'line-color': '#0f172a',
+          'line-width': 4
         }
       });
 
@@ -153,31 +159,11 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
     map.current.setFilter('cliopatria-fills', filter);
     map.current.setFilter('cliopatria-borders', filter);
 
-    // Update selection highlight
-    map.current.setPaintProperty('cliopatria-fills', 'fill-color', [
-      'case',
-      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-      '#e2b860',
-      ['get', 'Color']
-    ]);
-    map.current.setPaintProperty('cliopatria-fills', 'fill-opacity', [
-      'case',
-      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-      0.9,
-      0.5
-    ]);
-    map.current.setPaintProperty('cliopatria-borders', 'line-color', [
-      'case',
-      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-      '#0f172a',
-      ['get', 'Color']
-    ]);
-    map.current.setPaintProperty('cliopatria-borders', 'line-width', [
-      'case',
-      ['==', ['get', 'DisplayName'], selectedPolity?.DisplayName || ''],
-      4,
-      1
-    ]);
+    // Update selection layers
+    const selectedName = selectedPolity?.DisplayName || '';
+    const selectionFilter = ['==', ['get', 'DisplayName'], selectedName];
+    map.current.setFilter('cliopatria-selection-fill', selectionFilter);
+    map.current.setFilter('cliopatria-selection-border', selectionFilter);
 
     // Force legend update during playback
     updateLegend();

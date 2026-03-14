@@ -1,14 +1,41 @@
-import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Play, Pause, SkipBack, SkipForward, Hash } from 'lucide-react';
 
 const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
   const minYear = -3400;
   const maxYear = 2024;
   const range = maxYear - minYear;
+  const [inputVal, setInputVal] = useState(year.toString());
+
+  // Keep input in sync with external year changes
+  useEffect(() => {
+    setInputVal(year.toString());
+  }, [year]);
+
+  const handleInputChange = (e) => {
+    setInputVal(e.target.value);
+  };
+
+  const submitYear = () => {
+    let newYear = parseInt(inputVal);
+    if (isNaN(newYear)) {
+      setInputVal(year.toString());
+      return;
+    }
+    newYear = Math.max(minYear, Math.min(maxYear, newYear));
+    setYear(newYear);
+    setInputVal(newYear.toString());
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      submitYear();
+      e.target.blur();
+    }
+  };
 
   const renderTicks = () => {
     const ticks = [];
-    // Strictly centuries: -3400, -3300, ..., 2000
-    // We stop at 2000 because 2024 is the final year and not a full century boundary
     for (let y = -3400; y <= 2000; y += 100) {
       const position = ((y - minYear) / range) * 100;
       const isLabeled = y % 500 === 0 || y === minYear || y === 2000;
@@ -18,7 +45,7 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
           <div className="tick-line" style={{ height: isLabeled ? '8px' : '4px' }} />
           {isLabeled && (
             <div className="tick-label">
-              {y < 0 ? `${Math.abs(y)}BCE` : y === 0 ? '0' : `${y}CE`}
+              {y < 0 ? `${Math.abs(y)}B` : y === 0 ? '0' : `${y}C`}
             </div>
           )}
         </div>
@@ -31,7 +58,7 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
     <div className="controls-panel">
       <div className="bottom-bar-layout">
         
-        {/* Brand/Title */}
+        {/* Brand Section */}
         <div className="brand-section">
           <h1 className="title">Cliopatria</h1>
           <p className="subtitle">Seshat Global History Databank</p>
@@ -40,15 +67,17 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
         {/* Timeline & Playback */}
         <div className="timeline-section">
           <div className="playback-section">
-            <button className="icon-btn" onClick={() => onStep(-1)}>
-              <SkipBack size={16} />
-            </button>
-            <button className="icon-btn" onClick={onTogglePlay}>
-              {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
-            </button>
-            <button className="icon-btn" onClick={() => onStep(1)}>
-              <SkipForward size={16} />
-            </button>
+            <div className="playback-controls">
+              <button className="icon-btn" onClick={() => onStep(-1)}>
+                <SkipBack size={16} />
+              </button>
+              <button className="icon-btn play-pause" onClick={onTogglePlay}>
+                {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+              </button>
+              <button className="icon-btn" onClick={() => onStep(1)}>
+                <SkipForward size={16} />
+              </button>
+            </div>
             
             <div className="timeline-wrapper">
               <input
@@ -62,6 +91,19 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
               <div className="timeline-ticks">
                 {renderTicks()}
               </div>
+            </div>
+
+            <div className="year-jump-container">
+              <Hash size={14} className="text-slate-500" />
+              <input
+                type="text"
+                value={inputVal}
+                onChange={handleInputChange}
+                onBlur={submitYear}
+                onKeyDown={handleKeyDown}
+                className="year-jump-input"
+                placeholder="Year"
+              />
             </div>
           </div>
         </div>

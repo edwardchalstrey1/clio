@@ -316,6 +316,126 @@ body {
   overflow: hidden;
 }
 
+/* Year Jump UI */
+.year-jump-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.year-jump-container:hover, .year-jump-container:focus-within {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-gold);
+}
+
+.year-jump-input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  width: 45px;
+  text-align: center;
+  outline: none;
+}
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .info-box {
+    width: 280px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bottom-bar-layout {
+    flex-direction: column;
+    height: auto;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .brand-section {
+    text-align: center;
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .playback-section {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .timeline-wrapper {
+    width: 100%;
+    order: 3;
+    margin: 0;
+  }
+
+  .year-jump-container {
+    order: 2;
+  }
+
+  .playback-controls {
+    order: 1;
+  }
+
+  .legend-panel {
+    bottom: 120px;
+    left: 15px;
+    width: 220px;
+  }
+
+  .legend-panel.minimized {
+    width: 180px;
+  }
+
+  .info-box {
+    top: 15px;
+    right: 15px;
+    width: calc(100% - 30px);
+    max-height: 250px;
+  }
+
+  .large-year-overlay {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+  }
+
+  .tick-label {
+    font-size: 8px;
+  }
+
+  .legend-panel {
+    display: none; /* Hide legend on very small screens or make it minimizable to icon? Let's hide for now to prevent clutter */
+  }
+}
+
 .loading-bar-container {
   width: 300px;
   height: 4px;
