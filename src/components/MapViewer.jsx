@@ -159,7 +159,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
     } else {
       source.setData(data);
     }
-  }, [data, isStyleReady, onLoaded, year, onPolitySelect]);
+  }, [data, isStyleReady, onLoaded, onPolitySelect]);
 
   // Update filters and paint when year or selection changes
   useEffect(() => {
@@ -183,7 +183,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
 
     // Force legend update during playback
     updateLegend();
-  }, [year, isStyleReady, selectedPolity, updateLegend]);
+  }, [year, isStyleReady, selectedPolity, updateLegend, data]);
 
   return (
     <div ref={mapContainer} className="map-container" />
