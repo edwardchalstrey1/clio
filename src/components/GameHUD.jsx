@@ -49,7 +49,7 @@ const GameHUD = ({
             <div className="guess-input-group">
               <input 
                 type="number" 
-                className="year-jump-input guess-input" 
+                className="guess-input" 
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
                 placeholder="Year (e.g. 1500 or -300)"
