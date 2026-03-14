@@ -57,16 +57,17 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
         {/* Brand Section - Left */}
         <div className="brand-section">
           <h1 className="title">CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></h1>
-          <p className="subtitle">
+          <p className="subtitle" style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: screenWidth < 768 ? 'center' : 'flex-start' }}>
             <a
               href="https://github.com/Seshat-Global-History-Databank/cliopatria"
               target="_blank"
               rel="noopener noreferrer"
-              className="subtitle github-link"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'inherit' }}
+              className="github-link"
+              style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
             >
               <Github size={12} />
-            </a> A Map of World History
+            </a>
+            <span>A Map of World History</span>
           </p>
         </div>
 
