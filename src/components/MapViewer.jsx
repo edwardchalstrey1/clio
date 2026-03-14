@@ -2,10 +2,18 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity }) => {
+const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity, interactiveMode = 'viewer' }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
+
+  const onPolitySelectRef = useRef(onPolitySelect);
+  const onLoadedRef = useRef(onLoaded);
+
+  useEffect(() => {
+    onPolitySelectRef.current = onPolitySelect;
+    onLoadedRef.current = onLoaded;
+  }, [onPolitySelect, onLoaded]);
 
   // Helper to generate filter (Always Polities mode now)
   const getFilter = (y) => {
@@ -20,7 +28,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
 
   // Selection on click
   const updateLegend = useCallback(() => {
-    if (!map.current) return;
+    if (!map.current || !setVisiblePolities) return;
     const features = map.current.queryRenderedFeatures({ layers: ['cliopatria-fills'] });
     const visiblePolities = features.map(f => f.properties);
     setVisiblePolities(visiblePolities);
@@ -149,17 +157,19 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
       // Selection on click
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
-        onPolitySelect(feature.properties);
+        if (onPolitySelectRef.current) onPolitySelectRef.current(feature.properties);
       });
 
       map.current.on('idle', updateLegend);
       map.current.on('moveend', updateLegend);
       
-      onLoaded();
+      if (onLoadedRef.current) onLoadedRef.current();
     } else {
-      source.setData(data);
+      if (source._data !== data) { // Minimal protection against repeating setData
+        source.setData(data);
+      }
     }
-  }, [data, isStyleReady, onLoaded, onPolitySelect]);
+  }, [data, isStyleReady]);
 
   // Update filters and paint when year or selection changes
   useEffect(() => {

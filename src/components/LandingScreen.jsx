@@ -1,0 +1,44 @@
+import React from 'react';
+import './LandingScreen.css';
+
+const LandingScreen = ({ onSelectMode, loadProgress }) => {
+  return (
+    <div className="landing-container loading-overlay">
+      <div className="brand-section" style={{ marginBottom: '60px', textAlign: 'center', alignItems: 'center' }}>
+        <h1 className="title" style={{ fontSize: '4rem', margin: 0 }}>CLIO</h1>
+        <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Maps of world history.</p>
+      </div>
+
+      <div className="mode-selection">
+        <button
+          className="mode-card"
+          onClick={() => onSelectMode('viewer')}
+        >
+          <div className="mode-card-title">CLIO<span style={{ color: '#a3dafec7' }}>PATRIA</span></div>
+          <div className="mode-card-desc">Explore the territories of states, nations and empires across time.</div>
+        </button>
+
+        <button
+          className="mode-card game"
+          onClick={() => onSelectMode('game')}
+        >
+          <div className="mode-card-title">CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></div>
+          <div className="mode-card-desc">Test your historical knowledge in a 10 round map-based guessing game.</div>
+        </button>
+      </div>
+
+      {loadProgress < 99 && (
+        <div style={{ marginTop: '50px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="loading-bar-container">
+            <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
+          </div>
+          <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
+            {`Loading Background Data: ${loadProgress}%`}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default LandingScreen;
