@@ -42,9 +42,10 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
   const handleReveal = useCallback((polityProps) => {
     if (gameState !== 'playing') return;
     const name = polityProps.DisplayName;
+    const color = polityProps.Color;
     if (name) {
       setRevealedPolities(prev => {
-        if (!prev.includes(name)) return [...prev, name];
+        if (!prev.find(p => p.name === name)) return [...prev, { name, color }];
         return prev;
       });
     }
@@ -95,7 +96,21 @@ export default function ClioguesserLogic({ geoData, polityStats, onBack, onState
         <div className="hints-panel">
           <div className="hints-title">Revealed Polities (+{PENALTY_PER_HINT} penalty each)</div>
           <ul className="hints-list">
-            {revealedPolities.map((name, i) => <li key={i}>{name}</li>)}
+            {revealedPolities.map((polity, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span 
+                  style={{ 
+                    display: 'inline-block', 
+                    width: '12px', 
+                    height: '12px', 
+                    backgroundColor: polity.color,
+                    borderRadius: '2px',
+                    border: '1px solid rgba(255, 255, 255, 0.4)'
+                  }} 
+                />
+                {polity.name}
+              </li>
+            ))}
           </ul>
         </div>
       )}
