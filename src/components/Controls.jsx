@@ -34,18 +34,30 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
     }
   };
 
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const renderTicks = () => {
     const ticks = [];
+    const isMobile = screenWidth < 768;
+    const skipFactor = isMobile ? 1000 : 500;
+
     for (let y = -3400; y <= 2000; y += 100) {
       const position = ((y - minYear) / range) * 100;
-      const isLabeled = y % 500 === 0 || y === minYear || y === 2000;
+      // Show label if it matches skipFactor, or if it's start/end
+      const isLabeled = y % skipFactor === 0 || y === minYear || y === 2000;
       
       ticks.push(
         <div key={y} className="tick" style={{ left: `${position}%`, position: 'absolute' }}>
           <div className="tick-line" style={{ height: isLabeled ? '8px' : '4px' }} />
           {isLabeled && (
             <div className="tick-label">
-              {y < 0 ? `${Math.abs(y)}B` : y === 0 ? '0' : `${y}C`}
+              {y < 0 ? `${Math.abs(y)}BCE` : y === 0 ? '0' : `${y}CE`}
             </div>
           )}
         </div>
@@ -93,17 +105,20 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
         </div>
 
         {/* Year Jump - Far Right */}
-        <div className="year-jump-container">
-          <Hash size={14} className="text-slate-500" />
-          <input
-            type="text"
-            value={inputVal}
-            onChange={handleInputChange}
-            onBlur={submitYear}
-            onKeyDown={handleKeyDown}
-            className="year-jump-input"
-            placeholder="Year"
-          />
+        <div className="year-jump-wrapper">
+          <span className="year-jump-label">GO TO YEAR</span>
+          <div className="year-jump-container">
+            <Hash size={12} className="text-slate-500" />
+            <input
+              type="text"
+              value={inputVal}
+              onChange={handleInputChange}
+              onBlur={submitYear}
+              onKeyDown={handleKeyDown}
+              className="year-jump-input"
+              placeholder="Year"
+            />
+          </div>
         </div>
 
       </div>

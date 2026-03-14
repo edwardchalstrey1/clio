@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, Users } from 'lucide-react';
 
 const Legend = ({ polities, onPolityClick, selectedPolity }) => {
   const legendRef = useRef(null);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(window.innerWidth < 768);
   
   // Deduplicate by DisplayName
   const uniquePolities = Array.from(new Map(polities.map(p => [p.DisplayName, p])).values())
