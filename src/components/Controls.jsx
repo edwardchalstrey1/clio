@@ -1,38 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Hash } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
 const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
   const minYear = -3400;
   const maxYear = 2024;
   const range = maxYear - minYear;
-  const [inputVal, setInputVal] = useState(year.toString());
-
-  // Keep input in sync with external year changes
-  useEffect(() => {
-    setInputVal(year.toString());
-  }, [year]);
-
-  const handleInputChange = (e) => {
-    setInputVal(e.target.value);
-  };
-
-  const submitYear = () => {
-    let newYear = parseInt(inputVal);
-    if (isNaN(newYear)) {
-      setInputVal(year.toString());
-      return;
-    }
-    newYear = Math.max(minYear, Math.min(maxYear, newYear));
-    setYear(newYear);
-    setInputVal(newYear.toString());
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      submitYear();
-      e.target.blur();
-    }
-  };
 
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
@@ -101,23 +73,6 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
           />
           <div className="timeline-ticks">
             {renderTicks()}
-          </div>
-        </div>
-
-        {/* Year Jump - Far Right */}
-        <div className="year-jump-wrapper">
-          <span className="year-jump-label">GO TO YEAR</span>
-          <div className="year-jump-container">
-            <Hash size={12} className="text-slate-500" />
-            <input
-              type="text"
-              value={inputVal}
-              onChange={handleInputChange}
-              onBlur={submitYear}
-              onKeyDown={handleKeyDown}
-              className="year-jump-input"
-              placeholder="Year"
-            />
           </div>
         </div>
 

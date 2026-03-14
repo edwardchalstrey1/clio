@@ -3,6 +3,7 @@ import MapViewer from './components/MapViewer';
 import Controls from './components/Controls';
 import InfoBox from './components/InfoBox';
 import Legend from './components/Legend';
+import YearJump from './components/YearJump';
 import './App.css';
 
 function App() {
@@ -165,8 +166,11 @@ function App() {
       />
 
       <div className="large-year-overlay">
-        <span className="year-value">{Math.abs(year)}</span>
-        <span className="year-suffix">{year < 0 ? 'BCE' : 'CE'}</span>
+        <div className="year-display">
+          <span className="year-value">{Math.abs(year)}</span>
+          <span className="year-suffix">{year < 0 ? 'BCE' : 'CE'}</span>
+        </div>
+        <YearJump year={year} setYear={setYear} isPlaying={isPlaying} />
       </div>
 
       <InfoBox 
