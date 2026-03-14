@@ -7,6 +7,14 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
 
+  const onPolitySelectRef = useRef(onPolitySelect);
+  const onLoadedRef = useRef(onLoaded);
+
+  useEffect(() => {
+    onPolitySelectRef.current = onPolitySelect;
+    onLoadedRef.current = onLoaded;
+  }, [onPolitySelect, onLoaded]);
+
   // Helper to generate filter (Always Polities mode now)
   const getFilter = (y) => {
     const yearNum = parseInt(y);
@@ -149,17 +157,19 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
       // Selection on click
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
-        if (onPolitySelect) onPolitySelect(feature.properties);
+        if (onPolitySelectRef.current) onPolitySelectRef.current(feature.properties);
       });
 
       map.current.on('idle', updateLegend);
       map.current.on('moveend', updateLegend);
       
-      if (onLoaded) onLoaded();
+      if (onLoadedRef.current) onLoadedRef.current();
     } else {
-      source.setData(data);
+      if (source._data !== data) { // Minimal protection against repeating setData
+        source.setData(data);
+      }
     }
-  }, [data, isStyleReady, onLoaded, onPolitySelect]);
+  }, [data, isStyleReady]);
 
   // Update filters and paint when year or selection changes
   useEffect(() => {

@@ -186,3 +186,39 @@
   border-color: var(--color-gold);
   color: var(--color-gold);
 }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .guess-section, .result-section {
+    align-items: center;
+    width: 100%;
+  }
+
+  .guess-input-group {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .guess-input {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
+
+  .guess-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .result-section {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .result-stats {
+    align-items: center;
+    width: 100%;
+  }
+}
