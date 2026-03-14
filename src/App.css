@@ -191,8 +191,8 @@ body {
 /* Year Display Box - Bottom Left Unit */
 .large-year-overlay {
   position: absolute;
-  bottom: 85px; /* Above footer */
-  left: 10px;
+  bottom: 120px; /* Moved up on desktop */
+  left: 20px;
   background: rgba(15, 23, 42, 0.9);
   padding: 16px 24px;
   border-radius: 4px;
@@ -304,8 +304,9 @@ body {
   border-top: 3px solid transparent; 
   border-radius: 4px;
   padding: 24px;
-  z-index: 160; /* Higher than YearJump */
+  z-index: 180; /* Max prominence */
   box-shadow: 0 16px 64px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
 }
 
 .info-header {
@@ -480,39 +481,60 @@ body {
   }
 
   .large-year-overlay {
-    bottom: unset;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 16px;
+    bottom: 80px; /* Near footer */
+    top: auto;
+    left: 10px;
+    transform: none;
+    padding: 12px;
     border-left: none;
-    border-top: 4px solid var(--color-gold);
-    width: calc(100% - 40px);
-    max-width: 300px;
+    border-top: 3px solid var(--color-gold);
+    width: calc(50% - 15px);
+    max-width: none;
     align-items: center;
     text-align: center;
+    gap: 8px;
   }
   
   .year-display { justify-content: center; }
-  .year-value { font-size: 3rem; }
+  .year-value { font-size: 2rem; }
+  .year-suffix { font-size: 0.8rem; }
   
   .year-jump-box {
     width: 100%;
     align-items: center;
+    padding-top: 8px;
+    gap: 4px;
   }
+  
+  .year-jump-input {
+    width: 60px;
+    padding: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .era-btn { padding: 4px 6px; font-size: 9px; }
 
   .info-box {
-    top: 10px;
-    left: 10px;
-    width: calc(100% - 20px);
-    max-height: 40vh;
-    padding: 16px;
+    top: auto;
+    bottom: 80px;
+    right: 10px;
+    left: auto;
+    width: calc(50% - 15px);
+    max-height: 250px;
+    padding: 12px;
+    margin: 0;
+    overflow-y: auto;
   }
+
+  .info-title { font-size: 1rem; margin-bottom: 8px; }
+  .info-table td { padding: 4px 0; font-size: 0.75rem; }
+  .wiki-link-container { margin-top: 8px; padding-top: 8px; }
   
   .legend-panel {
     top: 10px;
     right: 10px;
     max-height: 30vh;
+    z-index: 190;
   }
 }
 

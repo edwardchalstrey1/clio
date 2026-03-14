@@ -20,6 +20,8 @@ const Controls = ({ year, setYear, isPlaying, onTogglePlay, onStep }) => {
     const skipFactor = isMobile ? 1000 : 500;
 
     for (let y = -3400; y <= 2000; y += 100) {
+      if (isMobile && y === -3400) continue; // Skip start tick on mobile as requested
+      
       const position = ((y - minYear) / range) * 100;
       // Show label if it matches skipFactor, or if it's start/end
       const isLabeled = y % skipFactor === 0 || y === minYear || y === 2000;

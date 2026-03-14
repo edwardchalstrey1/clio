@@ -10,25 +10,21 @@ const YearJump = ({ year, setYear, isPlaying }) => {
     setEra(year < 0 ? 'BCE' : 'CE');
   }, [year]);
 
-  const submitYear = () => {
-    let numericYear = parseInt(inputVal);
-    if (isNaN(numericYear)) {
-      setInputVal(Math.abs(year).toString());
-      return;
+  const handleInputChange = (val) => {
+    setInputVal(val);
+    const numericYear = parseInt(val);
+    if (!isNaN(numericYear)) {
+      const limitedYear = Math.min(Math.abs(numericYear), era === 'BCE' ? 3400 : 2024);
+      setYear(era === 'BCE' ? -limitedYear : limitedYear);
     }
-    
-    // Limits
-    numericYear = Math.min(Math.abs(numericYear), era === 'BCE' ? 3400 : 2024);
-    const finalYear = era === 'BCE' ? -numericYear : numericYear;
-    
-    setYear(finalYear);
-    setInputVal(numericYear.toString());
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      submitYear();
-      e.target.blur();
+  const handleEraChange = (newEra) => {
+    setEra(newEra);
+    const numericYear = parseInt(inputVal);
+    if (!isNaN(numericYear)) {
+      const limitedYear = Math.min(Math.abs(numericYear), newEra === 'BCE' ? 3400 : 2024);
+      setYear(newEra === 'BCE' ? -limitedYear : limitedYear);
     }
   };
 
@@ -39,22 +35,20 @@ const YearJump = ({ year, setYear, isPlaying }) => {
         <input
           type="text"
           value={inputVal}
-          onChange={(e) => setInputVal(e.target.value)}
-          onBlur={submitYear}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => handleInputChange(e.target.value)}
           className="year-jump-input"
           placeholder="Year"
         />
         <div className="era-toggle">
           <button 
             className={`era-btn ${era === 'BCE' ? 'active' : ''}`}
-            onClick={() => { setEra('BCE'); setTimeout(submitYear, 0); }}
+            onClick={() => handleEraChange('BCE')}
           >
             BCE
           </button>
           <button 
             className={`era-btn ${era === 'CE' ? 'active' : ''}`}
-            onClick={() => { setEra('CE'); setTimeout(submitYear, 0); }}
+            onClick={() => handleEraChange('CE')}
           >
             CE
           </button>
