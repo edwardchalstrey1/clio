@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity }) => {
+const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
@@ -61,9 +61,26 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
     });
 
     map.current.on('load', () => {
+      setIsStyleReady(true);
+    });
+
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, []);
+
+  // Handle data updates separately if they arrive after map load
+  useEffect(() => {
+    if (!map.current || !isStyleReady || !data) return;
+    
+    const source = map.current.getSource('cliopatria');
+    if (!source) {
       map.current.addSource('cliopatria', {
         type: 'geojson',
-        data: '/data.geojson',
+        data: data,
         generateId: true
       });
 
@@ -137,18 +154,12 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
 
       map.current.on('idle', updateLegend);
       map.current.on('moveend', updateLegend);
-
-      setIsStyleReady(true);
+      
       onLoaded();
-    });
-
-    return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-      }
-    };
-  }, []);
+    } else {
+      source.setData(data);
+    }
+  }, [data, isStyleReady, onLoaded, year, onPolitySelect]);
 
   // Update filters and paint when year or selection changes
   useEffect(() => {

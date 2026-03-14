@@ -14,6 +14,7 @@ function App() {
   const [selectedPolity, setSelectedPolity] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [polityStats, setPolityStats] = useState({});
+  const [geoData, setGeoData] = useState(null);
 
   // Fetch and index data on mount with simulated progress
   useEffect(() => {
@@ -26,45 +27,60 @@ function App() {
       setLoadProgress(progress);
     }, 50);
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/data.geojson');
+    // Fetch partitioned data
+    const parts = ['/data_part1.json', '/data_part2.json', '/data_part3.json'];
+    let completedParts = 0;
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const data = JSON.parse(xhr.responseText);
-        const stats = {};
+    Promise.all(parts.map(url => 
+      fetch(url).then(res => {
+        completedParts++;
+        // Update progress based on completed parts (33% each)
+        // We still keep the simulated bar but jumping to specific milestones
+        const partProgress = Math.round((completedParts / parts.length) * 100);
+        setLoadProgress(prev => Math.max(prev, partProgress - 2)); 
+        return res.json();
+      })
+    )).then(dataParts => {
+      // Merge features
+      const mergedData = {
+        type: "FeatureCollection",
+        name: "cliopatria_polities_merged",
+        crs: dataParts[0].crs,
+        features: dataParts.flatMap(p => p.features)
+      };
 
-        data.features.forEach(f => {
-          const p = f.properties;
-          const name = p.DisplayName;
-          if (!stats[name]) {
-            stats[name] = {
-              minYear: p.FromYear,
-              maxYear: p.ToYear,
-              yearlyData: {}
-            };
-          }
-          stats[name].minYear = Math.min(stats[name].minYear, p.FromYear);
-          stats[name].maxYear = Math.max(stats[name].maxYear, p.ToYear);
+      const stats = {};
+      mergedData.features.forEach(f => {
+        const p = f.properties;
+        const name = p.DisplayName;
+        if (!stats[name]) {
+          stats[name] = {
+            minYear: p.FromYear,
+            maxYear: p.ToYear,
+            yearlyData: {}
+          };
+        }
+        stats[name].minYear = Math.min(stats[name].minYear, p.FromYear);
+        stats[name].maxYear = Math.max(stats[name].maxYear, p.ToYear);
 
-          // Aggregate area for the same year slice
-          if (!stats[name].yearlyData[p.FromYear]) {
-            stats[name].yearlyData[p.FromYear] = {
-              area: 0,
-              color: p.Color
-            };
-          }
-          stats[name].yearlyData[p.FromYear].area += (p.Area || 0);
-        });
+        if (!stats[name].yearlyData[p.FromYear]) {
+          stats[name].yearlyData[p.FromYear] = {
+            area: 0,
+            color: p.Color
+          };
+        }
+        stats[name].yearlyData[p.FromYear].area += (p.Area || 0);
+      });
 
-        setPolityStats(stats);
+      setPolityStats(stats);
+      setGeoData(mergedData);
 
-        // Complete the loading bar
-        clearInterval(progressInterval);
-        setLoadProgress(99);
-      }
-    };
-    xhr.send();
+      // Complete the loading bar
+      clearInterval(progressInterval);
+      setLoadProgress(99);
+    }).catch(err => {
+      console.error('Error loading map data:', err);
+    });
 
     return () => clearInterval(progressInterval);
   }, []);
@@ -159,6 +175,7 @@ function App() {
 
       <MapViewer
         year={year}
+        data={geoData}
         onLoaded={handleLoaded}
         setVisiblePolities={setVisiblePolities}
         onPolitySelect={setSelectedPolity}
