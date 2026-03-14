@@ -107,8 +107,9 @@ body {
 
 .timeline-wrapper {
   position: relative;
-  flex-grow: 1; /* Horizontal expansion */
-  margin: 0 20px;
+  flex-grow: 1;
+  max-width: 800px; /* Constrain for desktop readability */
+  margin: 0 40px;
 }
 
 .playback-section {
@@ -481,54 +482,57 @@ body {
   }
 
   .large-year-overlay {
-    bottom: 80px; /* Near footer */
+    bottom: 80px; 
     top: auto;
-    left: 10px;
+    left: 8px;
     transform: none;
-    padding: 12px;
+    padding: 10px;
     border-left: none;
     border-top: 3px solid var(--color-gold);
-    width: calc(50% - 15px);
+    width: calc(45% - 8px);
     max-width: none;
     align-items: center;
     text-align: center;
-    gap: 8px;
+    gap: 6px;
+    z-index: 200;
   }
   
   .year-display { justify-content: center; }
-  .year-value { font-size: 2rem; }
-  .year-suffix { font-size: 0.8rem; }
+  .year-value { font-size: 1.8rem; }
+  .year-suffix { font-size: 0.7rem; }
   
   .year-jump-box {
     width: 100%;
     align-items: center;
-    padding-top: 8px;
+    padding-top: 6px;
     gap: 4px;
   }
   
   .year-jump-input {
-    width: 60px;
+    width: 50px;
     padding: 4px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   
-  .era-btn { padding: 4px 6px; font-size: 9px; }
+  .era-btn { padding: 4px 5px; font-size: 8px; }
 
   .info-box {
     top: auto;
     bottom: 80px;
-    right: 10px;
+    right: 8px;
     left: auto;
-    width: calc(50% - 15px);
-    max-height: 250px;
-    padding: 12px;
+    width: calc(55% - 15px);
+    max-height: 200px;
+    padding: 10px;
     margin: 0;
     overflow-y: auto;
+    z-index: 200;
   }
 
-  .info-title { font-size: 1rem; margin-bottom: 8px; }
-  .info-table td { padding: 4px 0; font-size: 0.75rem; }
-  .wiki-link-container { margin-top: 8px; padding-top: 8px; }
+  .info-header { margin-bottom: 12px; }
+  .info-title { font-size: 0.9rem; margin-bottom: 4px; }
+  .info-table td { padding: 3px 0; font-size: 0.7rem; }
+  .wiki-link-container { margin-top: 6px; padding-top: 6px; }
   
   .legend-panel {
     top: 10px;
