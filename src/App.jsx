@@ -43,7 +43,7 @@ function App() {
           stats[name].minYear = Math.min(stats[name].minYear, p.FromYear);
           stats[name].maxYear = Math.max(stats[name].maxYear, p.ToYear);
           stats[name].yearlyData[p.FromYear] = {
-            area: p.TerritorialArea,
+            area: p.Area,
             color: p.Color
           };
         });
@@ -81,10 +81,10 @@ function App() {
           
           if (currentSliceStart !== undefined) {
              const sliceData = stats.yearlyData[currentSliceStart];
-             if (selectedPolity.TerritorialArea !== sliceData.area) {
+             if (selectedPolity.Area !== sliceData.area) {
                 setSelectedPolity(prev => ({
                    ...prev,
-                   TerritorialArea: sliceData.area
+                   Area: sliceData.area
                 }));
              }
           }

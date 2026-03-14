@@ -1,7 +1,7 @@
 const InfoBox = ({ selectedPolity, onClose, polityStats }) => {
   if (!selectedPolity) return null;
 
-  const { DisplayName, Wikipedia, TerritorialArea } = selectedPolity;
+  const { DisplayName, Wikipedia, Area } = selectedPolity;
   const stats = polityStats[DisplayName] || { 
     minYear: selectedPolity.FromYear, 
     maxYear: selectedPolity.ToYear 
@@ -27,10 +27,10 @@ const InfoBox = ({ selectedPolity, onClose, polityStats }) => {
               {formatYear(stats.minYear)} <span className="text-[10px] text-slate-500 mx-1">to</span> {formatYear(stats.maxYear)}
             </td>
           </tr>
-          {TerritorialArea && (
+          {Area && (
             <tr>
               <td>Territorial Area</td>
-              <td>{Math.round(TerritorialArea).toLocaleString()} <span className="text-[10px] text-slate-500 ml-1">Km²</span></td>
+              <td>{Math.round(Area).toLocaleString()} <span className="text-[10px] text-slate-500 ml-1">Km²</span></td>
             </tr>
           )}
         </tbody>
