@@ -34,18 +34,18 @@ const MapViewer = ({ year, onLoaded, setVisiblePolities, onPolitySelect, selecte
       style: {
         version: 8,
         sources: {
-          'esri-gray': {
+          'carto-positron': {
             type: 'raster',
-            tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'],
+            tiles: ['https://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'],
             tileSize: 256,
-            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           }
         },
         layers: [
           {
-            id: 'esri-gray-layer',
+            id: 'carto-positron-layer',
             type: 'raster',
-            source: 'esri-gray',
+            source: 'carto-positron',
             minzoom: 0,
             maxzoom: 20
           }
