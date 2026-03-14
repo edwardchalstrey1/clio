@@ -4,6 +4,8 @@ import Controls from './components/Controls';
 import InfoBox from './components/InfoBox';
 import Legend from './components/Legend';
 import YearJump from './components/YearJump';
+import LandingScreen from './components/LandingScreen';
+import ClioguesserLogic from './components/ClioguesserLogic';
 import './App.css';
 
 function App() {
@@ -15,6 +17,7 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [polityStats, setPolityStats] = useState({});
   const [geoData, setGeoData] = useState(null);
+  const [appMode, setAppMode] = useState(null);
 
   // Fetch and index data on mount with simulated progress
   useEffect(() => {
@@ -153,6 +156,34 @@ function App() {
     }
     setIsPlaying(!isPlaying);
   };
+
+  if (!appMode) {
+    return <LandingScreen onSelectMode={setAppMode} loadProgress={loadProgress} />;
+  }
+
+  if (appMode === 'game') {
+    return (
+      <div className="app-container">
+        {!geoData && (
+          <div className="loading-overlay">
+            <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
+              <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#a3dafec7' }}>GUESSER</span></h1>
+              <p className="subtitle" style={{ fontSize: '1.2rem', opacity: 0.8 }}>Test your historical knowledge</p>
+            </div>
+
+            <div className="loading-bar-container">
+              <div className="loading-bar-fill" style={{ width: `${loadProgress}%` }}></div>
+            </div>
+
+            <div className="loading-text" style={{ marginTop: '16px', fontSize: '0.8rem' }}>
+              {`Loading Historical Data: ${loadProgress}%`}
+            </div>
+          </div>
+        )}
+        {geoData && <ClioguesserLogic geoData={geoData} polityStats={polityStats} onBack={() => setAppMode(null)} />}
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity }) => {
+const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity, interactiveMode = 'viewer' }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
@@ -20,7 +20,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
 
   // Selection on click
   const updateLegend = useCallback(() => {
-    if (!map.current) return;
+    if (!map.current || !setVisiblePolities) return;
     const features = map.current.queryRenderedFeatures({ layers: ['cliopatria-fills'] });
     const visiblePolities = features.map(f => f.properties);
     setVisiblePolities(visiblePolities);
@@ -149,13 +149,13 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
       // Selection on click
       map.current.on('click', 'cliopatria-fills', (e) => {
         const feature = e.features[0];
-        onPolitySelect(feature.properties);
+        if (onPolitySelect) onPolitySelect(feature.properties);
       });
 
       map.current.on('idle', updateLegend);
       map.current.on('moveend', updateLegend);
       
-      onLoaded();
+      if (onLoaded) onLoaded();
     } else {
       source.setData(data);
     }
