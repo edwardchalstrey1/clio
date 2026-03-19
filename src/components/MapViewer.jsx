@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import * as pmtiles from 'pmtiles';
 
-const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity, interactiveMode = 'viewer' }) => {
+let protocol = new pmtiles.Protocol();
+try {
+  maplibregl.addProtocol("pmtiles", protocol.tile);
+} catch (e) {
+  // Ignore
+}
+
+const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity, interactiveMode = 'viewer' }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
@@ -82,14 +90,13 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
 
   // Handle data updates separately if they arrive after map load
   useEffect(() => {
-    if (!map.current || !isStyleReady || !data) return;
+    if (!map.current || !isStyleReady || !dataReady) return;
     
     const source = map.current.getSource('cliopatria');
     if (!source) {
       map.current.addSource('cliopatria', {
-        type: 'geojson',
-        data: data,
-        generateId: true
+        type: 'vector',
+        url: 'pmtiles://' + window.location.origin + '/data.pmtiles'
       });
 
       const initialFilter = getFilter(year);
@@ -99,6 +106,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
         id: 'cliopatria-fills',
         type: 'fill',
         source: 'cliopatria',
+        'source-layer': 'combined',
         layout: {},
         filter: initialFilter,
         paint: {
@@ -112,6 +120,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
         id: 'cliopatria-borders',
         type: 'line',
         source: 'cliopatria',
+        'source-layer': 'combined',
         layout: {},
         filter: initialFilter,
         paint: {
@@ -125,6 +134,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
         id: 'cliopatria-selection-fill',
         type: 'fill',
         source: 'cliopatria',
+        'source-layer': 'combined',
         layout: {},
         filter: ['==', ['get', 'DisplayName'], ''],
         paint: {
@@ -137,6 +147,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
         id: 'cliopatria-selection-border',
         type: 'line',
         source: 'cliopatria',
+        'source-layer': 'combined',
         layout: {},
         filter: ['==', ['get', 'DisplayName'], ''],
         paint: {
@@ -164,12 +175,8 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
       map.current.on('moveend', updateLegend);
       
       if (onLoadedRef.current) onLoadedRef.current();
-    } else {
-      if (source._data !== data) { // Minimal protection against repeating setData
-        source.setData(data);
-      }
     }
-  }, [data, isStyleReady]);
+  }, [dataReady, isStyleReady]);
 
   // Update filters and paint when year or selection changes
   useEffect(() => {
@@ -193,7 +200,7 @@ const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, s
 
     // Force legend update during playback
     updateLegend();
-  }, [year, isStyleReady, selectedPolity, updateLegend, data]);
+  }, [year, isStyleReady, selectedPolity, updateLegend]);
 
   return (
     <div ref={mapContainer} className="map-container" />
