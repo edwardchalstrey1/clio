@@ -3,14 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as pmtiles from 'pmtiles';
 
-let protocol = new pmtiles.Protocol();
-try {
-  maplibregl.addProtocol("pmtiles", protocol.tile);
-} catch (e) {
-  // Ignore
-}
-
-const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity, interactiveMode = 'viewer' }) => {
+const MapViewer = ({ year, data, onLoaded, setVisiblePolities, onPolitySelect, selectedPolity, interactiveMode = 'viewer' }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [isStyleReady, setIsStyleReady] = useState(false);
@@ -90,13 +83,14 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
 
   // Handle data updates separately if they arrive after map load
   useEffect(() => {
-    if (!map.current || !isStyleReady || !dataReady) return;
+    if (!map.current || !isStyleReady || !data) return;
     
     const source = map.current.getSource('cliopatria');
     if (!source) {
       map.current.addSource('cliopatria', {
-        type: 'vector',
-        url: 'pmtiles://' + window.location.origin + '/data.pmtiles'
+        type: 'geojson',
+        data: data,
+        generateId: true
       });
 
       const initialFilter = getFilter(year);
@@ -175,8 +169,12 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
       map.current.on('moveend', updateLegend);
       
       if (onLoadedRef.current) onLoadedRef.current();
+    } else {
+      if (source._data !== data) { // Minimal protection against repeating setData
+        source.setData(data);
+      }
     }
-  }, [dataReady, isStyleReady]);
+  }, [data, isStyleReady]);
 
   // Update filters and paint when year or selection changes
   useEffect(() => {
@@ -200,7 +198,7 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
 
     // Force legend update during playback
     updateLegend();
-  }, [year, isStyleReady, selectedPolity, updateLegend]);
+  }, [year, isStyleReady, selectedPolity, updateLegend, data]);
 
   return (
     <div ref={mapContainer} className="map-container" />

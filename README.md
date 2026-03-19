@@ -2,7 +2,7 @@
 
 View the site at [https://clio-seven.vercel.app/](https://clio-seven.vercel.app/).
 
-A high-performance, GPU-accelerated web application for exploring the [Cliopatria](https://github.com/Seshat-Global-History-Databank/cliopatria) dataset.
+A high-performance, GPU-accelerated web application for exploring the [Cliopatria](https://github.com/Seshat-Global-History-Databank/cliopatria).
 Built with Vite, React, and MapLibre GL JS.
 
 ### Local Development

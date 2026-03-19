@@ -16,7 +16,7 @@ function App() {
   const [selectedPolity, setSelectedPolity] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [polityStats, setPolityStats] = useState({});
-  const [dataReady, setDataReady] = useState(false);
+  const [geoData, setGeoData] = useState(null);
   const [appMode, setAppMode] = useState(null);
   
   // Game mode map states to proxy into MapViewer
@@ -35,18 +35,60 @@ function App() {
       setLoadProgress(progress);
     }, 50);
 
-    fetch('/polityStats.json')
-      .then(res => res.json())
-      .then(stats => {
-        clearInterval(progressInterval);
-        setLoadProgress(100);
-        setPolityStats(stats);
-        setDataReady(true);
+    // Fetch partitioned data
+    const parts = ['/data_part1.json', '/data_part2.json', '/data_part3.json'];
+    let completedParts = 0;
+
+    Promise.all(parts.map(url => 
+      fetch(url).then(res => {
+        completedParts++;
+        // Update progress based on completed parts (33% each)
+        // We still keep the simulated bar but jumping to specific milestones
+        const partProgress = Math.round((completedParts / parts.length) * 100);
+        setLoadProgress(prev => Math.max(prev, partProgress - 2)); 
+        return res.json();
       })
-      .catch(err => {
-        console.error("Error loading GeoJSON", err);
-        clearInterval(progressInterval);
+    )).then(dataParts => {
+      // Merge features
+      const mergedData = {
+        type: "FeatureCollection",
+        name: "cliopatria_polities_merged",
+        crs: dataParts[0].crs,
+        features: dataParts.flatMap(p => p.features)
+      };
+
+      const stats = {};
+      mergedData.features.forEach(f => {
+        const p = f.properties;
+        const name = p.DisplayName;
+        if (!stats[name]) {
+          stats[name] = {
+            minYear: p.FromYear,
+            maxYear: p.ToYear,
+            yearlyData: {}
+          };
+        }
+        stats[name].minYear = Math.min(stats[name].minYear, p.FromYear);
+        stats[name].maxYear = Math.max(stats[name].maxYear, p.ToYear);
+
+        if (!stats[name].yearlyData[p.FromYear]) {
+          stats[name].yearlyData[p.FromYear] = {
+            area: 0,
+            color: p.Color
+          };
+        }
+        stats[name].yearlyData[p.FromYear].area += (p.Area || 0);
       });
+
+      setPolityStats(stats);
+      setGeoData(mergedData);
+
+      // Complete the loading bar
+      clearInterval(progressInterval);
+      setLoadProgress(99);
+    }).catch(err => {
+      console.error('Error loading map data:', err);
+    });
 
     return () => clearInterval(progressInterval);
   }, []);
@@ -145,7 +187,7 @@ function App() {
         <LandingScreen onSelectMode={setAppMode} loadProgress={loadProgress} mode={null} />
       )}
       
-      {(appMode === 'game' && !dataReady) && (
+      {(appMode === 'game' && !gameReady) && (
         <div className="loading-overlay" style={{ zIndex: 3000 }}>
           <div className="brand-section" style={{ marginBottom: '40px', textAlign: 'center', alignItems: 'center' }}>
             <h1 className="title" style={{ fontSize: '3rem', margin: 0 }}>CLIO<span style={{ color: '#ff7e67' }}>GUESSER</span></h1>
@@ -179,7 +221,7 @@ function App() {
       <div style={{ display: isModeLoading ? 'none' : 'flex', flexDirection: 'column', flexGrow: 1, position: 'relative', width: '100%' }}>
         <MapViewer
           year={appMode === 'game' ? gameYear : year}
-          dataReady={dataReady}
+          data={geoData}
           interactiveMode={appMode === 'game' ? 'game' : 'viewer'}
           onLoaded={handleLoaded}
           setVisiblePolities={setVisiblePolities}
@@ -226,8 +268,9 @@ function App() {
       )}
 
       {/* Game UI */}
-      {appMode === 'game' && dataReady && (
+      {appMode === 'game' && geoData && (
         <ClioguesserLogic 
+          geoData={geoData} 
           polityStats={polityStats} 
           onBack={handleGameModeBack}
           onStateUpdate={(y, revealHandler) => {
