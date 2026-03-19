@@ -3,13 +3,9 @@ const path = require('path');
 
 const publicDir = path.join(__dirname, '../public');
 
-console.log('Reading GeoJSON parts...');
-const data1 = JSON.parse(fs.readFileSync(path.join(publicDir, 'data_part1.json')));
-const data2 = JSON.parse(fs.readFileSync(path.join(publicDir, 'data_part2.json')));
-const data3 = JSON.parse(fs.readFileSync(path.join(publicDir, 'data_part3.json')));
-
-const allFeatures = [...data1.features, ...data2.features, ...data3.features];
-const combined = { type: 'FeatureCollection', features: allFeatures };
+console.log('Reading GeoJSON data...');
+const data = JSON.parse(fs.readFileSync(path.join(publicDir, 'data.geojson')));
+const allFeatures = data.features;
 
 console.log('Calculating polityStats...');
 const stats = {};
@@ -39,6 +35,3 @@ allFeatures.forEach(f => {
 
 fs.writeFileSync(path.join(publicDir, 'polityStats.json'), JSON.stringify(stats));
 console.log('Saved polityStats.json');
-
-fs.writeFileSync(path.join(publicDir, 'combined.geojson'), JSON.stringify(combined));
-console.log('Saved combined.geojson');

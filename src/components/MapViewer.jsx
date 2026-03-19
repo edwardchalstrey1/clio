@@ -106,7 +106,7 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
         id: 'cliopatria-fills',
         type: 'fill',
         source: 'cliopatria',
-        'source-layer': 'combined',
+        'source-layer': 'data',
         layout: {},
         filter: initialFilter,
         paint: {
@@ -120,7 +120,7 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
         id: 'cliopatria-borders',
         type: 'line',
         source: 'cliopatria',
-        'source-layer': 'combined',
+        'source-layer': 'data',
         layout: {},
         filter: initialFilter,
         paint: {
@@ -134,7 +134,7 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
         id: 'cliopatria-selection-fill',
         type: 'fill',
         source: 'cliopatria',
-        'source-layer': 'combined',
+        'source-layer': 'data',
         layout: {},
         filter: ['==', ['get', 'DisplayName'], ''],
         paint: {
@@ -147,7 +147,7 @@ const MapViewer = ({ year, dataReady, onLoaded, setVisiblePolities, onPolitySele
         id: 'cliopatria-selection-border',
         type: 'line',
         source: 'cliopatria',
-        'source-layer': 'combined',
+        'source-layer': 'data',
         layout: {},
         filter: ['==', ['get', 'DisplayName'], ''],
         paint: {
