@@ -12,11 +12,13 @@ const GameHUD = ({
   lastResult
 }) => {
   const [guess, setGuess] = useState('');
+  const [era, setEra] = useState('CE');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (guess === '') return;
-    onGuess(parseInt(guess));
+    const yearNum = Math.abs(parseInt(guess));
+    onGuess(era === 'BCE' ? -yearNum : yearNum);
     setGuess('');
   };
 
@@ -52,9 +54,25 @@ const GameHUD = ({
                 className="guess-input" 
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
-                placeholder="Year (e.g. 1500 or -300)"
+                placeholder="Year (e.g. 1500)"
                 required
               />
+              <div className="era-toggle">
+                <button 
+                  type="button"
+                  className={`era-btn ${era === 'BCE' ? 'active' : ''}`}
+                  onClick={() => setEra('BCE')}
+                >
+                  BCE
+                </button>
+                <button 
+                  type="button"
+                  className={`era-btn ${era === 'CE' ? 'active' : ''}`}
+                  onClick={() => setEra('CE')}
+                >
+                  CE
+                </button>
+              </div>
               <button type="submit" className="gold-btn guess-btn">SUBMIT</button>
             </div>
             <div className="hint-info subtitle">Click a polity for a hint (+50 penalty)</div>
@@ -62,8 +80,8 @@ const GameHUD = ({
         ) : (
           <div className="result-section" style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <div className="result-stats">
-              <span className="result-item">True Year: <strong className="gold-text">{lastResult.trueYear}</strong></span>
-              <span className="result-item">Your Guess: <strong>{lastResult.guess}</strong></span>
+              <span className="result-item">True Year: <strong className="gold-text">{lastResult.trueYear < 0 ? `${Math.abs(lastResult.trueYear)} BCE` : `${lastResult.trueYear} CE`}</strong></span>
+              <span className="result-item">Your Guess: <strong>{lastResult.guess < 0 ? `${Math.abs(lastResult.guess)} BCE` : `${lastResult.guess} CE`}</strong></span>
               <span className="result-item">Off by: <strong>{lastResult.error}</strong> yrs</span>
               {lastResult.penalties > 0 && <span className="result-item penalty">Penalties: +{lastResult.penalties}</span>}
             </div>

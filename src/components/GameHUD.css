@@ -13,7 +13,37 @@
 
 .guess-input-group {
   display: flex;
+  align-items: center;
   gap: 12px;
+}
+
+.era-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 44px; /* Match input height */
+  box-sizing: border-box;
+}
+
+.era-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.era-btn.active {
+  background: var(--color-gold);
+  color: var(--color-ink);
 }
 
 .guess-input {
@@ -43,10 +73,12 @@
 .guess-input::-webkit-outer-spin-button,
 .guess-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 .guess-input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .gold-btn {
